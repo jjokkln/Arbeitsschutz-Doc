@@ -217,7 +217,7 @@
     <div class="hero">
       <div class="hero-card">
         <h1>Arbeitssicherheits-Dokument als Word erstellen</h1>
-        <p class="sub">Mini-Generator für Begehung, Gefährdungsbeurteilung, PSA, Unterweisung, Organisation und Unterschriften. Logos hochladen, bestehende Stellenbeschreibung per KI importieren, Daten prüfen, Word exportieren.</p>
+        <p class="sub">Mini-Generator für Begehung, Gefährdungsbeurteilung, PSA, Organisation und Unterschriften. Logos hochladen, bestehende Stellenbeschreibung per KI importieren, Daten prüfen, Word exportieren.</p>
         <div class="badge-row">
           <span class="badge">DOCX-Export</span>
           <span class="badge">Logo im Deckblatt + Kopfzeile</span>
@@ -228,7 +228,7 @@
         </div>
       </div>
       <aside class="sticky-actions">
-        <button id="generateAllBtn" class="primary">Alle 3 Dokumente exportieren</button>
+        <button id="generateAllBtn" class="primary">Alle 2 Dokumente exportieren</button>
         <div class="btn-row">
           <button class="secondary" id="demoBtn" type="button">Beispiel füllen</button>
           <button class="ghost" id="saveJsonBtn" type="button">JSON speichern</button>
@@ -244,7 +244,6 @@
       <button class="tab-btn active" onclick="switchTab('tab-basis', this)">1. Basis & KI-Import</button>
       <button class="tab-btn" onclick="switchTab('tab-doc1', this)">2. Arbeitssicherheit</button>
       <button class="tab-btn" onclick="switchTab('tab-doc2', this)">3. Stellenbeschreibung</button>
-      <button class="tab-btn" onclick="switchTab('tab-doc3', this)">4. Unterweisung</button>
     </div>
 
     <div id="tab-basis" class="tab-content active">
@@ -322,13 +321,12 @@
       <div class="section-head"><h2>2. Allgemeine Angaben & Arbeitsplatz</h2></div>
       <div class="grid">
         <div class="field"><label>Kundenunternehmen / Einsatzbetrieb</label><input id="clientCompany" /></div>
-        <div class="field"><label>Kunden-Nr.</label><input id="clientNumber" /></div>
+        <div class="field"><label>Dokumenten-Nr.</label><input id="clientNumber" /></div>
         <div class="field"><label>Durchgeführt durch</label><input id="conductedBy" /></div>
         <div class="field"><label>Ansprechpartner beim Kunden</label><input id="clientContact" /></div>
         <div class="field"><label>Oberbegriff / Position</label><input id="position" value="Staplerfahrer / Lagerhelfer" /></div>
         <div class="field"><label>Mitarbeiter/-in</label><input id="employee" /></div>
         <div class="field"><label>Arbeitsort / Bereich</label><input id="area" value="Zentrallager / Weiße Ware" /></div>
-        <div class="field"><label>Mitarbeiter/-in am vereinbarten Arbeitsplatz?</label><select id="employeeOnSite"><option>Ja</option><option>Nein</option><option>Noch offen</option></select></div>
       </div>
     </section>
     </div>
@@ -349,11 +347,12 @@
       <div class="repeat" id="psaRows"></div>
     </section>
     <section class="section">
-      <div class="section-head"><h2>9. Arbeitsmedizinische Vorsorge</h2></div>
-      <div class="grid">
-        <div class="field"><label>Pflichtvorsorge</label><input id="mandatoryCare" placeholder="z. B. nein / nach Tätigkeit prüfen" /></div>
-        <div class="field"><label>Angebotsvorsorge</label><input id="optionalCare" value="Muskel- & Skelettsystem bei körperlicher Tätigkeit" /></div>
-        <div class="field"><label>Wunschvorsorge</label><input id="requestCare" placeholder="optional" /></div>
+      <div class="section-head">
+        <h2>9. Arbeitsmedizinische Vorsorge</h2>
+        <button class="secondary" type="button" onclick="addVorsorgeRow()">Eintrag hinzufügen</button>
+      </div>
+      <div id="vorsorgeRows"></div>
+      <div class="grid" style="margin-top:12px">
         <div class="field"><label>Durchführung durch</label><input id="careBy" placeholder="ZA / EB / Betriebsarzt" /></div>
       </div>
     </section>
@@ -428,42 +427,6 @@ Nur unterwiesene Personen dürfen Maschinen bedienen</textarea></div>
       </div>
     </div>
 
-    <div id="tab-doc3" class="tab-content">
-    <section class="section small">
-      <div class="section-head"><h2>6. Allgemeine Sicherheitsunterweisung</h2></div>
-      <div class="grid">
-        <div class="field"><label>Verbots-/Gebots-/Warnzeichen</label><textarea id="signage">Rauchen verboten
-Feuer, offenes Licht und Rauchen verboten
-Gehörschutz tragen
-Augenschutz tragen
-Warnung vor feuergefährlichen Stoffen
-Warnung vor Flurförderzeugen</textarea></div>
-        <div class="field"><label>Allgemeines Verhalten im Betrieb</label><textarea id="generalSafety">Persönliche Schutzausrüstung tragen
-Betriebliche Verkehrswege einhalten
-Arbeiten nur nach Einweisung ausführen
-Mängel und Unfälle unverzüglich melden
-Ordnung und Sauberkeit am Arbeitsplatz einhalten</textarea></div>
-        <div class="field"><label>Notfall / Erste Hilfe</label><textarea id="emergency">Erste-Hilfe-Einrichtungen kennen
-Rettungswege freihalten
-Unfälle sofort melden
-Bei Gefahr Arbeit unterbrechen und Vorgesetzte informieren</textarea></div>
-        <div class="field"><label>Psychische Gesundheit / Belastung</label><textarea id="mentalHealth">Überlastung frühzeitig melden
-Pausen einhalten
-Bei Konflikten Ansprechpartner informieren
-Belastbarkeit realistisch einschätzen</textarea></div>
-      </div>
-    </section>
-    <section class="section">
-      <div class="section-head">
-        <h2>7. Tätigkeitsspezifische Unterweisung</h2>
-        <button class="secondary" type="button" onclick="addInstructionRow()">Unterweisung hinzufügen</button>
-      </div>
-      <div class="repeat" id="instructionRows"></div>
-    </section>
-      <div style="padding: 20px 0;">
-        <button class="primary" type="button" onclick="generateUnterweisungDoc()">Dokument 3 exportieren (Unterweisung)</button>
-      </div>
-    </div>
 
   </div>
 
@@ -494,7 +457,7 @@ Belastbarkeit realistisch einschätzen</textarea></div>
       instruction: 'Gib ausschließlich valides JSON zurück. Nutze nur Informationen aus Upload/Text. Fehlende Werte leer lassen, keine Fakten erfinden.',
       fields: {
         clientCompany: 'Kundenunternehmen / Einsatzbetrieb',
-        clientNumber: 'Kunden-Nr., falls vorhanden',
+        clientNumber: 'Dokumenten-Nr., falls vorhanden',
         conductedBy: 'Durchgeführt durch',
         clientContact: 'Ansprechpartner beim Kunden',
         position: 'Stellenbezeichnung / Oberbegriff',
@@ -515,9 +478,6 @@ Belastbarkeit realistisch einschätzen</textarea></div>
         loading: 'Be- und Entladung als Zeilenliste',
         storage: 'Lagerung als Zeilenliste',
         extraRules: 'Zusatzregeln als Zeilenliste',
-        mandatoryCare: 'Pflichtvorsorge',
-        optionalCare: 'Angebotsvorsorge',
-        requestCare: 'Wunschvorsorge',
         careBy: 'Durchführung Vorsorge durch',
         overallRating: 'Grün – Einsatz möglich / Gelb – Einsatz unter Voraussetzungen möglich / Rot – kein Einsatz möglich',
         conditions: 'Auflagen / Maßnahmen',
@@ -525,8 +485,8 @@ Belastbarkeit realistisch einschätzen</textarea></div>
       },
       riskRows: [{ area:'Gefährdungsbereich', risk:'Risiko/Ursache', measures:'Schutzmaßnahmen', rating:'Ausreichend | Verbesserung erforderlich | Nicht ausreichend', owner:'Verantwortlich', status:'Frist/Status' }],
       psaRows: [{ item:'PSA-Art', required:'Ja | Nein | Situativ', provided:'Zeitarbeitunternehmen | Einsatzbetrieb | Mitarbeiter', note:'Tragebereich/Hinweis' }],
-      instructionRows: [{ title:'Tätigkeit/Maschine', stand:'Stand/Version', points:'Unterweisungspunkte als Zeilenliste', special:'Besondere Hinweise' }],
-      orgRows: [{ area:'Bereich', owner:'Zuständig/Prüfung', contact:'Kontakt/Stelle', note:'Hinweis/Frist' }]
+      orgRows: [{ area:'Bereich', owner:'Zuständig/Prüfung', contact:'Kontakt/Stelle', note:'Hinweis/Frist' }],
+      vorsorgeRows: [{ code:'G-Code z.B. G 25', bezeichnung:'Anlass / Bezeichnung z.B. Staplertätigkeit', typ:'Pflicht | Angebot' }]
     };
 
     function setAiStatus(text, error = false) {
@@ -551,12 +511,12 @@ Belastbarkeit realistisch einschätzen</textarea></div>
       if (data && data.result && typeof data.result === 'object') data = data.result;
       if (!data || typeof data !== 'object') throw new Error('KI-Antwort ist kein JSON-Objekt.');
 
-      const out = { fields: {}, riskRows: [], psaRows: [], instructionRows: [], orgRows: [] };
+      const out = { fields: {}, riskRows: [], psaRows: [], orgRows: [], vorsorgeRows: [] };
       const fieldSource = data.fields && typeof data.fields === 'object' ? data.fields : data;
       Object.keys(AI_IMPORT_SCHEMA.fields).forEach(id => {
         if (fieldSource[id] !== undefined && fieldSource[id] !== null) out.fields[id] = normalizeLines(fieldSource[id]);
       });
-      ['riskRows', 'psaRows', 'instructionRows', 'orgRows'].forEach(key => {
+      ['riskRows', 'psaRows', 'orgRows', 'vorsorgeRows'].forEach(key => {
         if (Array.isArray(data[key])) out[key] = data[key].map(row => {
           const cleaned = {};
           Object.entries(row || {}).forEach(([k, v]) => cleaned[k] = normalizeLines(v));
@@ -583,15 +543,15 @@ Belastbarkeit realistisch einschätzen</textarea></div>
       const tableMap = [
         ['riskRows', 'riskRows', addRiskRow],
         ['psaRows', 'psaRows', addPsaRow],
-        ['instructionRows', 'instructionRows', addInstructionRow],
-        ['orgRows', 'orgRows', addOrgRow]
+        ['orgRows', 'orgRows', addOrgRow],
+        ['vorsorgeRows', 'vorsorgeRows', addVorsorgeRow]
       ];
       tableMap.forEach(([key, containerId, addFn]) => {
         if (!Array.isArray(data[key]) || !data[key].length) return;
         if (mode === 'overwrite') $(containerId).innerHTML = '';
         data[key].forEach(addFn);
       });
-      setAiStatus(`Import fertig. Felder: ${importedFields.length}. Tabellen: ${data.riskRows.length + data.psaRows.length + data.instructionRows.length + data.orgRows.length} Einträge.`);
+      setAiStatus(`Import fertig. Felder: ${importedFields.length}. Tabellen: ${data.riskRows.length + data.psaRows.length + data.orgRows.length + data.vorsorgeRows.length} Einträge.`);
       setStatus('KI-Import übernommen. Bitte prüfen und dann Word-Dokument erstellen.');
     }
 
@@ -645,7 +605,6 @@ Belastbarkeit realistisch einschätzen</textarea></div>
           qualification: grabBlock(['qualifikation', 'kenntnisse']) || (lower.includes('staplerschein') ? 'Gültiger Staplerschein' : ''),
           worktime: field(['arbeitszeit', 'schicht', 'arbeitszeiten']),
           specialNotes: grabBlock(['rahmenbedingungen', 'hinweise', 'besonderheiten']),
-          optionalCare: /heben|tragen|körper|last/i.test(t) ? 'Muskel- & Skelettsystem bei körperlicher Tätigkeit' : '',
           generalSafety: 'Persönliche Schutzausrüstung tragen\nBetriebliche Verkehrswege einhalten\nMängel und Unfälle unverzüglich melden\nNur nach Einweisung arbeiten',
           traffic: /stapler|verkehr|fahrweg/i.test(t) ? 'Gekennzeichnete Verkehrswege nutzen\nFußwege und Fahrwege beachten\nBei Kreuzungen langsam fahren und Sichtkontakt herstellen' : '',
           loading: /belad|entlad|lkw|rampe|container/i.test(t) ? 'Ladung gegen Verrutschen sichern\nLadebrücken korrekt nutzen\nKipp- und Quetschgefahren beachten' : '',
@@ -653,7 +612,14 @@ Belastbarkeit realistisch einschätzen</textarea></div>
         },
         riskRows: risks,
         psaRows: psa,
-        instructionRows: position ? [{ title: position, stand: new Date().toISOString().slice(0,10), points: duties || 'Vor Arbeitsaufnahme einweisen lassen\nNur freigegebene Arbeitsmittel nutzen\nMängel sofort melden', special: 'Tätigkeit nur nach Unterweisung und Freigabe durchführen.' }] : []
+        vorsorgeRows: [
+          ...(/stapler|gabelstapler|hubwagen|flurförder|hubarbeitsbühne/i.test(t) ? [{code:'G 25', bezeichnung:'Fahr-/Steuertätigkeiten (Stapler)', typ:'Pflicht'}] : []),
+          ...(/lärm|laut|maschine|produktion|schleif|säg/i.test(t) ? [{code:'G 20', bezeichnung:'Lärmbelastung', typ:'Pflicht'}] : []),
+          ...(/heben|tragen|körper|last|paket|schieben|ziehen/i.test(t) ? [{code:'G 46', bezeichnung:'Muskel-Skelett-System (körperliche Belastung)', typ:'Angebot'}] : []),
+          ...(/bildschirm|pc |monitor|büro|sachbearbeit/i.test(t) ? [{code:'G 37', bezeichnung:'Bildschirmarbeit', typ:'Angebot'}] : []),
+          ...(/schweißen|schweiss|schneid|trennen/i.test(t) ? [{code:'G 39', bezeichnung:'Schweißen / Trennen von Metallen', typ:'Pflicht'}] : []),
+          ...(/atemschutz|atemmaske|ffp/i.test(t) ? [{code:'G 26', bezeichnung:'Atemschutz', typ:'Pflicht'}] : [])
+        ]
       };
     }
 
@@ -690,9 +656,8 @@ Belastbarkeit realistisch einschätzen</textarea></div>
           requirements: 'Staplerschein\nDeutschkenntnisse',
           worktime: 'Früh-/Spätschicht'
         },
-        riskRows: [{ area:'Transport & mobile Arbeitsmittel', risk:'Fahrverkehr', measures:'Unterweisung, Fahrwege nutzen', rating:'Ausreichend', owner:'Einsatzbetrieb', status:'laufend' }],
+        riskRows: [{ area:'Transport & mobile Arbeitsmittel', risk:'Fahrverkehr', measures:'Fahrwege nutzen, Geschwindigkeit anpassen', rating:'Ausreichend', owner:'Einsatzbetrieb', status:'laufend' }],
         psaRows: [{ item:'Sicherheitsschuhe S3', required:'Ja', provided:'Zeitarbeitunternehmen', note:'Lagerbereich' }],
-        instructionRows: [{ title:'Staplerfahrer', stand:'aktuell', points:'Sichtprüfung\nLasten sichern', special:'Nur beauftragte Personen' }],
         orgRows: [{ area:'Erste Hilfe', owner:'Einsatzbetrieb', contact:'Aushang', note:'Vor Ort bekanntgeben' }]
       };
       const blob = new Blob([JSON.stringify({ schema: AI_IMPORT_SCHEMA, example }, null, 2)], { type: 'application/json' });
@@ -764,20 +729,6 @@ Belastbarkeit realistisch einschätzen</textarea></div>
       $('psaRows').appendChild(wrap);
     }
 
-    function addInstructionRow(data = {}) {
-      const wrap = document.createElement('div');
-      wrap.className = 'repeat-card instruction-row';
-      wrap.innerHTML = `
-        <div class="grid">
-          <div class="field"><label>Tätigkeit / Thema</label><input data-key="title" value="${htmlEsc(data.title || '')}" placeholder="z. B. Staplerfahrer"></div>
-          <div class="field"><label>Stand / Version</label><input data-key="stand" value="${htmlEsc(data.stand || '')}" placeholder="z. B. 09.02.2024"></div>
-          <div class="field"><label>Unterweisungspunkte</label><textarea data-key="points">${htmlEsc(data.points || '')}</textarea></div>
-          <div class="field"><label>Defekte / Notfall / Besonderheiten</label><textarea data-key="special">${htmlEsc(data.special || '')}</textarea></div>
-        </div>
-        <div class="repeat-actions"><button class="danger" type="button" onclick="this.closest('.repeat-card').remove()">Entfernen</button></div>`;
-      $('instructionRows').appendChild(wrap);
-    }
-
     function addOrgRow(data = {}) {
       const wrap = document.createElement('div');
       wrap.className = 'repeat-card org-row';
@@ -792,6 +743,37 @@ Belastbarkeit realistisch einschätzen</textarea></div>
       $('orgRows').appendChild(wrap);
     }
 
+    const G_CODE_OPTIONS = [
+      ['G 7',  'G 7 – Kohlenstoffmonoxid / Abgase'],
+      ['G 20', 'G 20 – Lärm'],
+      ['G 24', 'G 24 – Haut / Feuchtarbeit'],
+      ['G 25', 'G 25 – Fahr-/Steuertätigkeiten'],
+      ['G 26', 'G 26 – Atemschutz'],
+      ['G 30', 'G 30 – Hitzebelastung'],
+      ['G 37', 'G 37 – Bildschirmarbeit'],
+      ['G 39', 'G 39 – Schweißen'],
+      ['G 40', 'G 40 – Krebserzeugende Stoffe'],
+      ['G 41', 'G 41 – Absturzgefahr'],
+      ['G 42', 'G 42 – Infektionsgefährdung'],
+      ['G 46', 'G 46 – Muskel-Skelett-System']
+    ];
+
+    function addVorsorgeRow(data = {}) {
+      const wrap = document.createElement('div');
+      wrap.className = 'repeat-card vorsorge-row';
+      const codeOptions = G_CODE_OPTIONS.map(([val, label]) =>
+        `<option value="${val}" ${data.code === val ? 'selected' : ''}>${label}</option>`
+      ).join('');
+      wrap.innerHTML = `
+        <div class="grid-3">
+          <div class="field"><label>G-Vorsorge</label><select data-key="code"><option value="">– bitte wählen –</option>${codeOptions}</select></div>
+          <div class="field"><label>Bezeichnung / Anlass</label><input data-key="bezeichnung" value="${htmlEsc(data.bezeichnung || '')}" placeholder="z. B. Staplertätigkeit"></div>
+          <div class="field"><label>Typ</label><select data-key="typ"><option ${data.typ === 'Pflicht' ? 'selected' : ''}>Pflicht</option><option ${data.typ === 'Angebot' ? 'selected' : ''}>Angebot</option></select></div>
+        </div>
+        <div class="repeat-actions"><button class="danger" type="button" onclick="this.closest('.repeat-card').remove()">Entfernen</button></div>`;
+      $('vorsorgeRows').appendChild(wrap);
+    }
+
     function collectRows(selector) {
       return [...document.querySelectorAll(selector)].map(row => {
         const obj = {};
@@ -802,7 +784,7 @@ Belastbarkeit realistisch einschätzen</textarea></div>
 
     function getFormData() {
       const ids = [...document.querySelectorAll('input:not([type=file]), textarea, select')].map(x => x.id).filter(Boolean).filter(id => !['aiWebhookToken','aiRawText'].includes(id));
-      const data = { fields: {}, riskRows: collectRows('.risk-row'), psaRows: collectRows('.psa-row'), instructionRows: collectRows('.instruction-row'), orgRows: collectRows('.org-row') };
+      const data = { fields: {}, riskRows: collectRows('.risk-row'), psaRows: collectRows('.psa-row'), orgRows: collectRows('.org-row'), vorsorgeRows: collectRows('.vorsorge-row') };
       ids.forEach(id => data.fields[id] = $(id).value);
       return data;
     }
@@ -811,19 +793,18 @@ Belastbarkeit realistisch einschätzen</textarea></div>
       Object.entries(data.fields || {}).forEach(([id, value]) => { if ($(id)) $(id).value = value; });
       $('riskRows').innerHTML = ''; (data.riskRows || []).forEach(addRiskRow);
       $('psaRows').innerHTML = ''; (data.psaRows || []).forEach(addPsaRow);
-      $('instructionRows').innerHTML = ''; (data.instructionRows || []).forEach(addInstructionRow);
       $('orgRows').innerHTML = ''; (data.orgRows || []).forEach(addOrgRow);
+      $('vorsorgeRows').innerHTML = ''; (data.vorsorgeRows || []).forEach(addVorsorgeRow);
     }
 
     function fillDemo() {
       const demo = {
         fields: {
           docTitle: 'Begehung / Arbeitssicherheit Extern', workplace: 'Logistik', version: '10.2025', filename: 'Begehung_Arbeitssicherheit_Logistik', docDate: today,
-          clientCompany: 'Muster Logistik GmbH', clientNumber: 'K-1025', conductedBy: 'Arbeitsschutz / Disposition', clientContact: 'Herr/Frau Ansprechpartner', position: 'Staplerfahrer / Lagerhelfer', employee: 'Max Mustermann', area: 'Zentrallager / Weiße Ware', employeeOnSite: 'Ja',
+          clientCompany: 'Muster Logistik GmbH', clientNumber: 'K-1025', conductedBy: 'Arbeitsschutz / Disposition', clientContact: 'Herr/Frau Ansprechpartner', position: 'Staplerfahrer / Lagerhelfer', employee: 'Max Mustermann', area: 'Zentrallager / Weiße Ware',
           duties: $('duties').value, equipment: $('equipment').value, requirements: $('requirements').value, qualification: $('qualification').value, worktime: $('worktime').value, specialNotes: $('specialNotes').value,
-          signage: $('signage').value, generalSafety: $('generalSafety').value, emergency: $('emergency').value, mentalHealth: $('mentalHealth').value,
           traffic: $('traffic').value, loading: $('loading').value, storage: $('storage').value, extraRules: $('extraRules').value,
-          mandatoryCare: 'Nach Tätigkeit prüfen', optionalCare: 'Muskel- & Skelettsystem bei körperlicher Tätigkeit', requestCare: 'Bei Bedarf möglich', careBy: 'Betriebsarzt / zuständige Stelle',
+          careBy: 'Betriebsarzt / zuständige Stelle',
           overallRating: 'Grün – Einsatz möglich', nextReview: 'Nach Absprache, innerhalb der gesetzlichen Frist', conditions: 'Einsatz unter Einhaltung der genannten Schutzmaßnahmen möglich.', signatures: $('signatures').value,
           accentColor: '#1A2C5A'
         },
@@ -839,15 +820,16 @@ Belastbarkeit realistisch einschätzen</textarea></div>
           {item:'Schutzhandschuhe', required:'Situativ', provided:'Zeitarbeitunternehmen', note:'Bei scharfkantiger Ware / Chemie'},
           {item:'Gehörschutz', required:'Situativ', provided:'Einsatzbetrieb', note:'Im Lärmbereich'}
         ],
-        instructionRows: [
-          {title:'Staplerfahrer', stand:'09.02.2024', points:'Nur schriftlich beauftragte und unterwiesene Personen dürfen fahren\nSicht- und Funktionsprüfung vor Arbeitsbeginn durchführen\nLasten nur gesichert und standsicher transportieren\nPersonenbeförderung ist untersagt\nBeim Verlassen Gabelzinken absenken und Fahrzeug sichern', special:'Bei Defekten Arbeit einstellen, Fahrzeug sichern und Vorgesetzte informieren. Reparaturen nur durch beauftragte Fachkräfte.'},
-          {title:'Lagerhelfer', stand:'12.03.2024', points:'Sicherheitsschuhe tragen\nFußwege und Fahrwege beachten\nBeim Öffnen von Kartons Sicherheitsmesser nutzen\nRettungswege und Feuerlöscher freihalten\nPakete und Waren standsicher lagern', special:'Schwere und unhandliche Lasten nur mit Hilfsmittel oder Unterstützung bewegen.'}
-        ],
         orgRows: [
           {area:'Unterweisung', owner:'ZA / AP / EB', contact:'Führungskraft vor Ort', note:'Vor Arbeitsaufnahme'},
           {area:'Erste Hilfe', owner:'Einsatzbetrieb', contact:'Aushang / Ersthelferliste', note:'Vor Ort bekanntgeben'},
           {area:'Sicherheitsbeauftragte', owner:'Einsatzbetrieb', contact:'Nach Aushang', note:'Bei Fragen kontaktieren'},
           {area:'Ansprechpartner Arbeitsschutz', owner:'ZA + EB', contact:'Disposition / Arbeitsschutz', note:'Bei Änderungen informieren'}
+        ],
+        vorsorgeRows: [
+          {code:'G 25', bezeichnung:'Fahr-/Steuertätigkeiten (Stapler)', typ:'Pflicht'},
+          {code:'G 20', bezeichnung:'Lärmbelastung im Lagerbereich', typ:'Pflicht'},
+          {code:'G 46', bezeichnung:'Muskel-Skelett-System (körperliche Belastung)', typ:'Angebot'}
         ]
       };
       loadFormData(demo);
@@ -858,7 +840,7 @@ Belastbarkeit realistisch einschätzen</textarea></div>
       if (!confirm('Formular wirklich leeren?')) return;
       document.querySelectorAll('input:not([type=file]), textarea').forEach(el => el.value = '');
       document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
-      $('riskRows').innerHTML = ''; $('psaRows').innerHTML = ''; $('instructionRows').innerHTML = ''; $('orgRows').innerHTML = '';
+      $('riskRows').innerHTML = ''; $('psaRows').innerHTML = ''; $('orgRows').innerHTML = ''; $('vorsorgeRows').innerHTML = '';
       $('docDate').value = today; $('accentColor').value = '#1A2C5A';
       setStatus('Formular geleert.');
     }
@@ -1055,7 +1037,7 @@ Belastbarkeit realistisch einschätzen</textarea></div>
     function appendGeneralInfo(children, accent) {
       children.push(heading('1. Allgemeine Angaben & Arbeitsplatz', 1, accent));
       children.push(labelTable([
-        ['Kundenunternehmen / Einsatzbetrieb', $('clientCompany').value], ['Kunden-Nr.', $('clientNumber').value], ['Datum der Begehung', $('docDate').value], ['Durchgeführt durch', $('conductedBy').value], ['Ansprechpartner/-in beim Kunden', $('clientContact').value], ['Oberbegriff / Position', $('position').value], ['Arbeitsplatz / Arbeitsbereich', $('area').value], ['Mitarbeiter/-in', $('employee').value], ['Mitarbeiter/-in am vereinbarten Arbeitsplatz?', $('employeeOnSite').value]
+        ['Kundenunternehmen / Einsatzbetrieb', $('clientCompany').value], ['Dokumenten-Nr.', $('clientNumber').value], ['Datum der Begehung', $('docDate').value], ['Durchgeführt durch', $('conductedBy').value], ['Ansprechpartner/-in beim Kunden', $('clientContact').value], ['Oberbegriff / Position', $('position').value], ['Arbeitsplatz / Arbeitsbereich', $('area').value], ['Mitarbeiter/-in', $('employee').value]
       ]));
     }
 
@@ -1077,7 +1059,11 @@ Belastbarkeit realistisch einschätzen</textarea></div>
         children.push(table([headerRow(['PSA-Art', 'Pflicht', 'Gestellt durch', 'Tragebereich / Hinweis'])].concat(psaRows.map(r => [r.item, r.required, r.provided, r.note])), [28, 16, 25, 31]));
 
         children.push(heading('4. Arbeitsmedizinische Vorsorge', 1, accent));
-        children.push(labelTable([['Pflichtvorsorge', $('mandatoryCare').value], ['Angebotsvorsorge', $('optionalCare').value], ['Wunschvorsorge', $('requestCare').value], ['Durchführung durch', $('careBy').value]]));
+        const vorsorgeRows = collectRows('.vorsorge-row');
+        if (vorsorgeRows.length) {
+          children.push(table([headerRow(['G-Vorsorge', 'Bezeichnung / Anlass', 'Typ'])].concat(vorsorgeRows.map(r => [r.code, r.bezeichnung, r.typ])), [18, 62, 20]));
+        }
+        children.push(labelTable([['Durchführung durch', $('careBy').value]]));
 
         children.push(heading('5. Organisation & Ansprechpartner', 1, accent));
         const orgRows = collectRows('.org-row');
@@ -1128,37 +1114,10 @@ Belastbarkeit realistisch einschätzen</textarea></div>
       } catch(e) { setStatus('Fehler: ' + e.message, true); console.error(e); }
     }
 
-    async function generateUnterweisungDoc() {
-      try {
-        setStatus('Dokument 3 (Unterweisungen) wird erstellt ...');
-        const base = await createBaseDoc('Sicherheitsunterweisung');
-        const { children, accent } = base;
-
-        appendGeneralInfo(children, accent);
-
-        children.push(heading('2. Allgemeine Sicherheitsunterweisung', 1, accent));
-        children.push(heading('Sicherheitskennzeichen', 2, accent)); children.push(...bullets($('signage').value));
-        children.push(heading('Allgemeines Verhalten', 2, accent)); children.push(...bullets($('generalSafety').value));
-        children.push(heading('Notfall / Erste Hilfe', 2, accent)); children.push(...bullets($('emergency').value));
-        children.push(heading('Psychische Gesundheit / Belastung', 2, accent)); children.push(...bullets($('mentalHealth').value));
-
-        children.push(heading('3. Tätigkeitsspezifische Unterweisung', 1, accent));
-        collectRows('.instruction-row').forEach((r, index) => {
-          children.push(heading(`${index + 1}. ${safe(r.title)}`, 2, accent));
-          children.push(labelTable([['Stand / Version', r.stand], ['Besonderheiten / Defekte / Notfall', r.special]]));
-          children.push(...bullets(r.points));
-        });
-
-        await finishAndDownloadDoc(base, 'Sicherheitsunterweisung', 'Unterweisung');
-        setStatus('Dokument 3 wurde erstellt.');
-      } catch(e) { setStatus('Fehler: ' + e.message, true); console.error(e); }
-    }
-
     async function generateAllDocs() {
       await generateArbeitssicherheitDoc();
       await generateStellenbeschreibungDoc();
-      await generateUnterweisungDoc();
-      setStatus('Alle 3 Dokumente wurden generiert.');
+      setStatus('Alle 2 Dokumente wurden generiert.');
     }
 
     $('demoBtn').addEventListener('click', fillDemo);
@@ -1196,8 +1155,6 @@ Belastbarkeit realistisch einschätzen</textarea></div>
     addPsaRow({item:'Sicherheitsschuhe S3', required:'Ja', provided:'Zeitarbeitunternehmen', note:'Im Lager- und Verkehrsbereich'});
     addPsaRow({item:'Warnschutzweste', required:'Ja', provided:'Einsatzbetrieb', note:'Bei Fahrverkehr / auf Verkehrswegen'});
     addPsaRow({item:'Schutzhandschuhe', required:'Situativ', provided:'Zeitarbeitunternehmen', note:'Bei scharfkantiger Ware oder Chemie'});
-    addInstructionRow({title:'Staplerfahrer', stand:'09.02.2024', points:'Nur schriftlich beauftragte und unterwiesene Personen dürfen fahren\nSicht- und Funktionsprüfung vor Arbeitsbeginn durchführen\nLasten sicher aufnehmen, transportieren und absetzen\nPersonenbeförderung ist untersagt\nBeim Abstellen Gabelzinken absenken und Fahrzeug sichern', special:'Bei Defekten Arbeit einstellen, Schaden melden und Reparaturen nur durch beauftragte Fachkräfte durchführen lassen.'});
-    addInstructionRow({title:'Lagerhelfer', stand:'12.03.2024', points:'Sicherheitsschuhe tragen\nFußwege und Fahrwege beachten\nBeim Öffnen von Kartons Sicherheitsmesser nutzen\nRettungswege und Feuerlöscher freihalten\nWaren standsicher lagern', special:'Schwere und unhandliche Lasten nur mit Hilfsmittel oder Unterstützung bewegen.'});
     addOrgRow({area:'Unterweisung', owner:'ZA / AP / EB', contact:'Führungskraft vor Ort', note:'Vor Arbeitsaufnahme'});
     addOrgRow({area:'Erste Hilfe', owner:'Einsatzbetrieb', contact:'Aushang / Ersthelferliste', note:'Vor Ort bekanntgeben'});
     addOrgRow({area:'Ansprechpartner Arbeitsschutz', owner:'ZA + EB', contact:'Disposition / Arbeitsschutz', note:'Bei Änderungen informieren'});
