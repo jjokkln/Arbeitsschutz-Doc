@@ -1,0 +1,1206 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Arbeitssicherheit Word-Generator</title>
+  <script src="https://cdn.jsdelivr.net/npm/docx@8.5.0/build/index.umd.js" onerror="var s=document.createElement('script');s.src='https://unpkg.com/docx@8.5.0/build/index.umd.js';document.head.appendChild(s)"></script>
+  <style>
+    :root {
+      --bg: #f6f3ee;
+      --card: #ffffff;
+      --ink: #172033;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --accent: #1A2C5A;
+      --accent-soft: #eef2ff;
+      --danger: #b91c1c;
+      --radius: 18px;
+      --shadow: 0 18px 50px rgba(24, 32, 51, .09);
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, rgba(26,44,90,.10), transparent 32%), var(--bg);
+      color: var(--ink);
+    }
+    .shell { max-width: 1240px; margin: 0 auto; padding: 32px 20px 60px; }
+    .hero {
+      display: grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap: 22px;
+      align-items: stretch;
+      margin-bottom: 22px;
+    }
+    .hero-card, .sticky-actions, .section {
+      background: rgba(255,255,255,.88);
+      border: 1px solid rgba(255,255,255,.72);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+    .hero-card { padding: 28px; }
+    h1 { margin: 0 0 10px; font-size: 30px; line-height: 1.1; letter-spacing: -.03em; }
+    .sub { margin: 0; color: var(--muted); line-height: 1.5; }
+    .badge-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+    .badge {
+      font-size: 12px;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(26,44,90,.11);
+      padding: 7px 10px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+    .sticky-actions {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: sticky;
+      top: 18px;
+      height: fit-content;
+    }
+    .status {
+      border-radius: 14px;
+      background: #f9fafb;
+      border: 1px solid var(--line);
+      padding: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .section { padding: 22px; margin-bottom: 16px; }
+    .section-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
+    .section h2 { margin: 0; font-size: 18px; letter-spacing: -.01em; }
+    label { display: block; font-size: 12px; font-weight: 800; color: #374151; margin: 0 0 6px; }
+    input, textarea, select {
+      width: 100%;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 13px;
+      padding: 11px 12px;
+      font: inherit;
+      outline: none;
+      transition: border .15s ease, box-shadow .15s ease;
+    }
+    input:focus, textarea:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 4px rgba(26,44,90,.10); }
+    textarea { min-height: 105px; resize: vertical; line-height: 1.45; }
+    .small textarea { min-height: 74px; }
+    .field { margin-bottom: 14px; }
+    .help { font-size: 12px; color: var(--muted); margin-top: 6px; }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 10px; }
+    button, .file-label {
+      appearance: none;
+      border: 0;
+      cursor: pointer;
+      border-radius: 13px;
+      padding: 11px 14px;
+      font-weight: 850;
+      font-size: 14px;
+      background: var(--accent);
+      color: white;
+      transition: transform .12s ease, opacity .12s ease;
+      text-align: center;
+    }
+    button:hover, .file-label:hover { transform: translateY(-1px); }
+    .secondary { background: #eef0f4; color: #111827; }
+    .ghost { background: transparent; color: var(--accent); border: 1px solid rgba(26,44,90,.22); }
+    .danger { background: #fee2e2; color: var(--danger); }
+    .primary { width: 100%; padding: 14px 16px; font-size: 15px; }
+    .repeat { display: flex; flex-direction: column; gap: 12px; }
+    .repeat-card {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fbfbfc;
+    }
+    .repeat-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+    .logo-box {
+      border: 1px dashed rgba(26,44,90,.38);
+      border-radius: 16px;
+      padding: 14px;
+      background: #fbfcff;
+      min-height: 152px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .logo-preview {
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: white;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      color: var(--muted);
+      font-size: 12px;
+      text-align: center;
+      padding: 10px;
+    }
+    .logo-preview img { max-height: 74px; max-width: 100%; object-fit: contain; }
+    input[type="file"] { display: none; }
+    .switch-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--muted); }
+    .switch-row input { width: auto; }
+    .divider { height: 1px; background: var(--line); margin: 6px 0 18px; }
+    .mini { font-size: 12px; color: var(--muted); }
+
+    .ai-section {
+      border: 1px solid rgba(26,44,90,.18);
+      background: linear-gradient(135deg, rgba(26,44,90,.07), rgba(255,255,255,.92));
+    }
+    .upload-zone {
+      border: 1.5px dashed rgba(26,44,90,.35);
+      border-radius: 18px;
+      padding: 18px;
+      background: #fbfcff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 138px;
+      color: var(--accent);
+      font-weight: 850;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .upload-zone small { display: block; color: var(--muted); font-weight: 600; margin-top: 6px; }
+    .upload-zone.dragover { background: #eef2ff; border-color: var(--accent); }
+    .ai-result {
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #f9fafb;
+      padding: 12px;
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin-top: 12px;
+      white-space: pre-wrap;
+    }
+    .secret-input { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
+    details.ai-details { margin-top: 14px; }
+    details.ai-details summary { cursor: pointer; color: var(--accent); font-weight: 800; font-size: 13px; }
+    pre.schema-box {
+      white-space: pre-wrap;
+      background: #0f172a;
+      color: #e5e7eb;
+      border-radius: 14px;
+      padding: 14px;
+      overflow: auto;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    @media (max-width: 920px) {
+      .hero, .grid, .grid-3 { grid-template-columns: 1fr; }
+      .sticky-actions { position: static; }
+    }
+    @media print { .sticky-actions, button, .file-label { display: none !important; } }
+  
+    .tabs { display: flex; gap: 10px; margin-bottom: 22px; border-bottom: 1px solid var(--line); padding-bottom: 14px; overflow-x: auto; }
+    .tab-btn { background: #fff; color: var(--muted); border: 1px solid var(--line); padding: 11px 18px; border-radius: 12px; cursor: pointer; font-weight: 700; font-size: 14px; transition: all .15s ease; white-space: nowrap; }
+    .tab-btn:hover { background: #f9fafb; border-color: #d1d5db; }
+    .tab-btn.active { background: var(--accent); color: white; border-color: var(--accent); }
+    .tab-content { display: none; animation: fadeIn 0.3s ease; }
+    .tab-content.active { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="hero">
+      <div class="hero-card">
+        <h1>Arbeitssicherheits-Dokument als Word erstellen</h1>
+        <p class="sub">Mini-Generator für Begehung, Gefährdungsbeurteilung, PSA, Unterweisung, Organisation und Unterschriften. Logos hochladen, bestehende Stellenbeschreibung per KI importieren, Daten prüfen, Word exportieren.</p>
+        <div class="badge-row">
+          <span class="badge">DOCX-Export</span>
+          <span class="badge">Logo im Deckblatt + Kopfzeile</span>
+          <span class="badge">Gefährdungstabellen</span>
+          <span class="badge">PSA & Vorsorge</span>
+          <span class="badge">JSON speichern/laden</span>
+          <span class="badge">PDF-/Foto-Import via KI</span>
+        </div>
+      </div>
+      <aside class="sticky-actions">
+        <button id="generateAllBtn" class="primary">Alle 3 Dokumente exportieren</button>
+        <div class="btn-row">
+          <button class="secondary" id="demoBtn" type="button">Beispiel füllen</button>
+          <button class="ghost" id="saveJsonBtn" type="button">JSON speichern</button>
+          <label class="file-label ghost" for="loadJson">JSON laden</label>
+          <input id="loadJson" type="file" accept="application/json,.json" />
+        </div>
+        <button class="danger" id="resetBtn" type="button">Formular leeren</button>
+        <div class="status" id="status">Bereit. Die Word-Datei wird lokal im Browser erstellt.</div>
+      </aside>
+    </div>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('tab-basis', this)">1. Basis & KI-Import</button>
+      <button class="tab-btn" onclick="switchTab('tab-doc1', this)">2. Arbeitssicherheit</button>
+      <button class="tab-btn" onclick="switchTab('tab-doc2', this)">3. Stellenbeschreibung</button>
+      <button class="tab-btn" onclick="switchTab('tab-doc3', this)">4. Unterweisung</button>
+    </div>
+
+    <div id="tab-basis" class="tab-content active">
+    <section class="section ai-section">
+      <div class="section-head">
+        <div>
+          <h2>KI-Import: Text-Zusammenfassung einfügen</h2>
+          <div class="help">Füge hier die Zusammenfassung des Claude-Agenten ein. Die KI ordnet die Daten automatisch den richtigen Feldern zu.</div>
+        </div>
+        <span class="badge">AI-ready</span>
+      </div>
+
+      <div class="field">
+        <label>Zusammenfassung vom Claude Custom Agent</label>
+        <textarea id="aiRawText" style="min-height: 200px;" placeholder="Text hier einfügen..."></textarea>
+      </div>
+
+      <div class="field">
+        <label>Import-Verhalten</label>
+        <select id="aiMergeMode">
+          <option value="overwrite">Erkannte Werte übernehmen / ersetzen</option>
+          <option value="fill-empty">Nur leere Felder füllen, Tabellen ergänzen</option>
+        </select>
+      </div>
+
+      <div class="btn-row">
+        <button id="aiAnalyzeBtn" type="button">Text verarbeiten & Formular füllen</button>
+        <button id="aiLocalTextBtn" class="secondary" type="button">Rohtext lokal vorbefüllen (ohne KI)</button>
+        <button id="downloadSchemaBtn" class="ghost" type="button">KI-Schema herunterladen</button>
+      </div>
+      <div class="ai-result" id="aiStatus">Bereit. Starte den lokalen Node-Server, um die KI-Verarbeitung zu nutzen.</div>
+
+      <details class="ai-details">
+        <summary>Erwartetes KI-Antwortformat anzeigen</summary>
+        <pre class="schema-box" id="aiSchemaPreview"></pre>
+      </details>
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>1. Branding & Dokument</h2></div>
+      <div class="grid">
+        <div class="logo-box">
+          <div>
+            <label>Arbeitgeber Logo</label>
+            <div class="help">Deckblatt groß + Kopfzeile + Fußzeile</div>
+          </div>
+          <select id="predefinedLogo" class="primary" style="margin-bottom: 10px;">
+            <option value="">Kein Logo</option>
+            <option value="assets/eigenes_logo/Ambroox.png">Ambroox</option>
+            <option value="assets/eigenes_logo/Bejob.png">Bejob</option>
+            <option value="assets/eigenes_logo/Galdora.png">Galdora</option>
+          </select>
+          <div class="logo-preview" id="predefinedLogoPreview">Kein Logo gewählt</div>
+        </div>
+        <div class="logo-box">
+          <div>
+            <label>Kunden-/Einsatzbetrieb-Logo</label>
+            <div class="help">Deckblatt rechts/unter dem Titel</div>
+          </div>
+          <div class="logo-preview" id="clientLogoPreview">Optional</div>
+          <label class="file-label secondary" for="clientLogo">Logo hochladen</label>
+          <input id="clientLogo" data-kind="logo" type="file" accept="image/png,image/jpeg,image/webp" />
+        </div>
+      </div>
+      <div class="divider"></div>
+      <div class="grid">
+        <div class="field"><label>Titel</label><input id="docTitle" value="Begehung / Arbeitssicherheit Extern" /></div>
+        <div class="field"><label>Akzentfarbe</label><input id="accentColor" type="color" value="#1A2C5A" /></div>
+        <div class="field"><label>Arbeitsplatz / Bereich</label><input id="workplace" value="Logistik" /></div>
+        <div class="field"><label>Stand / Version</label><input id="version" value="10.2025" /></div>
+        <div class="field"><label>Dateiname</label><input id="filename" value="Arbeitssicherheit_Logistik" /></div>
+        <div class="field"><label>Dokumentdatum</label><input id="docDate" type="date" /></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>2. Allgemeine Angaben & Arbeitsplatz</h2></div>
+      <div class="grid">
+        <div class="field"><label>Kundenunternehmen / Einsatzbetrieb</label><input id="clientCompany" /></div>
+        <div class="field"><label>Kunden-Nr.</label><input id="clientNumber" /></div>
+        <div class="field"><label>Durchgeführt durch</label><input id="conductedBy" /></div>
+        <div class="field"><label>Ansprechpartner beim Kunden</label><input id="clientContact" /></div>
+        <div class="field"><label>Oberbegriff / Position</label><input id="position" value="Staplerfahrer / Lagerhelfer" /></div>
+        <div class="field"><label>Mitarbeiter/-in</label><input id="employee" /></div>
+        <div class="field"><label>Arbeitsort / Bereich</label><input id="area" value="Zentrallager / Weiße Ware" /></div>
+        <div class="field"><label>Mitarbeiter/-in am vereinbarten Arbeitsplatz?</label><select id="employeeOnSite"><option>Ja</option><option>Nein</option><option>Noch offen</option></select></div>
+      </div>
+    </section>
+    </div>
+
+    <div id="tab-doc1" class="tab-content">
+    <section class="section">
+      <div class="section-head">
+        <h2>4. Gefährdungsbeurteilung & Maßnahmen</h2>
+        <button class="secondary" type="button" onclick="addRiskRow()">Gefährdung hinzufügen</button>
+      </div>
+      <div class="repeat" id="riskRows"></div>
+    </section>
+    <section class="section">
+      <div class="section-head">
+        <h2>5. Persönliche Schutzausrüstung</h2>
+        <button class="secondary" type="button" onclick="addPsaRow()">PSA hinzufügen</button>
+      </div>
+      <div class="repeat" id="psaRows"></div>
+    </section>
+    <section class="section">
+      <div class="section-head"><h2>9. Arbeitsmedizinische Vorsorge</h2></div>
+      <div class="grid">
+        <div class="field"><label>Pflichtvorsorge</label><input id="mandatoryCare" placeholder="z. B. nein / nach Tätigkeit prüfen" /></div>
+        <div class="field"><label>Angebotsvorsorge</label><input id="optionalCare" value="Muskel- & Skelettsystem bei körperlicher Tätigkeit" /></div>
+        <div class="field"><label>Wunschvorsorge</label><input id="requestCare" placeholder="optional" /></div>
+        <div class="field"><label>Durchführung durch</label><input id="careBy" placeholder="ZA / EB / Betriebsarzt" /></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head">
+        <h2>10. Organisation & Ansprechpartner</h2>
+        <button class="secondary" type="button" onclick="addOrgRow()">Eintrag hinzufügen</button>
+      </div>
+      <div class="repeat" id="orgRows"></div>
+    </section>
+    <section class="section small">
+      <div class="section-head"><h2>11. Bewertung, Auflagen & Unterschriften</h2></div>
+      <div class="grid">
+        <div class="field"><label>Gesamteinschätzung</label><select id="overallRating"><option>Grün – Einsatz möglich</option><option>Gelb – Einsatz unter Voraussetzungen möglich</option><option>Rot – kein Einsatz möglich</option></select></div>
+        <div class="field"><label>Nächste Arbeitsplatzbesichtigung</label><input id="nextReview" value="Nach Absprache, innerhalb der gesetzlichen Frist" /></div>
+        <div class="field"><label>Auflagen / Maßnahmen</label><textarea id="conditions">Keine zusätzlichen Maßnahmen erforderlich.</textarea></div>
+        <div class="field"><label>Unterschriftenblöcke</label><textarea id="signatures">Unterschrift Arbeitgeber
+Unterschrift Mitarbeiter/-in
+Unterschrift Einsatzbetrieb / Ansprechpartner</textarea></div>
+      </div>
+    </section>
+      <div style="padding: 20px 0;">
+        <button class="primary" type="button" onclick="generateArbeitssicherheitDoc()">Dokument 1 exportieren (Arbeitssicherheit)</button>
+      </div>
+    </div>
+
+    <div id="tab-doc2" class="tab-content">
+    <section class="section small">
+      <div class="section-head"><h2>3. Stellenbeschreibung & Rahmenbedingungen</h2></div>
+      <div class="grid">
+        <div class="field"><label>Tätigkeitsprofil</label><textarea id="duties">Warenein- und Ausgang
+Be- und Entladung
+Sichtprüfung / Organisation der Stellplätze
+Warenschau
+Einhaltung der Standards des Einsatzbetriebs</textarea></div>
+        <div class="field"><label>Arbeitsmittel / Maschinen</label><textarea id="equipment">Gabelstapler
+Elektro-Ameise / Hubwagen
+Laderampe
+Scanner / EDV-Systeme</textarea></div>
+        <div class="field"><label>Grundvoraussetzungen Personal</label><textarea id="requirements">Erfahrung im Umgang mit Flurfördermitteln
+Deutschkenntnisse
+Verantwortungsbewusstsein
+Körperliche Fitness</textarea></div>
+        <div class="field"><label>Qualifikation / Ziel</label><textarea id="qualification">Umgang mit Frontstapler / Klammeraufsatz
+Verständnis für Logistikprozesse
+Gültiger Staplerschein, sofern erforderlich</textarea></div>
+        <div class="field"><label>Arbeitszeit / Schicht</label><textarea id="worktime">Frühschicht: 05:50 – 14:20 Uhr
+Spätschicht: 10:30 – 19:00 Uhr
+Einsatz nach individuellem Bedarf</textarea></div>
+        <div class="field"><label>Besondere Hinweise</label><textarea id="specialNotes">Einarbeitung durch den Einsatzbetrieb
+Übernahmeoption nach Abstimmung möglich</textarea></div>
+      </div>
+    </section>
+    <section class="section small">
+      <div class="section-head"><h2>8. Verkehrswege, Be-/Entladung & Lagerung</h2></div>
+      <div class="grid">
+        <div class="field"><label>Verkehrswege</label><textarea id="traffic">Gekennzeichnete Fahrwege sind keine Fußwege
+Auf zulässige Verkehrswege achten
+Vor Kreuzungen langsam fahren und Blickkontakt herstellen</textarea></div>
+        <div class="field"><label>Be- & Entladung</label><textarea id="loading">LKW muss ausreichend stabil und gegen Verschieben gesichert sein
+Ladebrücke sicher auflegen
+Kippen und Verrutschen der Ladung vermeiden</textarea></div>
+        <div class="field"><label>Lagerplätze</label><textarea id="storage">Beim Stapeln auf Kippsicherheit achten
+Regale und Rettungswege nicht blockieren
+Beschädigte Ware oder Verpackung sofort melden</textarea></div>
+        <div class="field"><label>Zusatzregeln</label><textarea id="extraRules">Bei unklarer Situation Arbeit stoppen und Führungskraft informieren
+Nur unterwiesene Personen dürfen Maschinen bedienen</textarea></div>
+      </div>
+    </section>
+      <div style="padding: 20px 0;">
+        <button class="primary" type="button" onclick="generateStellenbeschreibungDoc()">Dokument 2 exportieren (Stellenbeschreibung)</button>
+      </div>
+    </div>
+
+    <div id="tab-doc3" class="tab-content">
+    <section class="section small">
+      <div class="section-head"><h2>6. Allgemeine Sicherheitsunterweisung</h2></div>
+      <div class="grid">
+        <div class="field"><label>Verbots-/Gebots-/Warnzeichen</label><textarea id="signage">Rauchen verboten
+Feuer, offenes Licht und Rauchen verboten
+Gehörschutz tragen
+Augenschutz tragen
+Warnung vor feuergefährlichen Stoffen
+Warnung vor Flurförderzeugen</textarea></div>
+        <div class="field"><label>Allgemeines Verhalten im Betrieb</label><textarea id="generalSafety">Persönliche Schutzausrüstung tragen
+Betriebliche Verkehrswege einhalten
+Arbeiten nur nach Einweisung ausführen
+Mängel und Unfälle unverzüglich melden
+Ordnung und Sauberkeit am Arbeitsplatz einhalten</textarea></div>
+        <div class="field"><label>Notfall / Erste Hilfe</label><textarea id="emergency">Erste-Hilfe-Einrichtungen kennen
+Rettungswege freihalten
+Unfälle sofort melden
+Bei Gefahr Arbeit unterbrechen und Vorgesetzte informieren</textarea></div>
+        <div class="field"><label>Psychische Gesundheit / Belastung</label><textarea id="mentalHealth">Überlastung frühzeitig melden
+Pausen einhalten
+Bei Konflikten Ansprechpartner informieren
+Belastbarkeit realistisch einschätzen</textarea></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-head">
+        <h2>7. Tätigkeitsspezifische Unterweisung</h2>
+        <button class="secondary" type="button" onclick="addInstructionRow()">Unterweisung hinzufügen</button>
+      </div>
+      <div class="repeat" id="instructionRows"></div>
+    </section>
+      <div style="padding: 20px 0;">
+        <button class="primary" type="button" onclick="generateUnterweisungDoc()">Dokument 3 exportieren (Unterweisung)</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    function switchTab(tabId, btn) {
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+      document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+      $(tabId).classList.add('active');
+      btn.classList.add('active');
+    }
+
+    const today = new Date().toISOString().slice(0, 10);
+    $('docDate').value = today;
+
+    function setStatus(text, error = false) {
+      const el = $('status');
+      el.textContent = text;
+      el.style.color = error ? '#b91c1c' : '#6b7280';
+      el.style.borderColor = error ? '#fecaca' : '#e5e7eb';
+      el.style.background = error ? '#fff1f2' : '#f9fafb';
+    }
+
+
+    const AI_IMPORT_SCHEMA = {
+      format: 'arbeitssicherheit_docx_schema_v1',
+      instruction: 'Gib ausschließlich valides JSON zurück. Nutze nur Informationen aus Upload/Text. Fehlende Werte leer lassen, keine Fakten erfinden.',
+      fields: {
+        clientCompany: 'Kundenunternehmen / Einsatzbetrieb',
+        clientNumber: 'Kunden-Nr., falls vorhanden',
+        conductedBy: 'Durchgeführt durch',
+        clientContact: 'Ansprechpartner beim Kunden',
+        position: 'Stellenbezeichnung / Oberbegriff',
+        employee: 'Mitarbeitername, falls vorhanden',
+        area: 'Arbeitsort / Arbeitsbereich',
+        workplace: 'Kurzbereich, z. B. Logistik',
+        duties: 'Tätigkeiten als Zeilenliste',
+        equipment: 'Arbeitsmittel / Maschinen als Zeilenliste',
+        requirements: 'Grundvoraussetzungen Personal als Zeilenliste',
+        qualification: 'Qualifikationen / Ziel als Zeilenliste',
+        worktime: 'Arbeitszeiten / Schichten als Zeilenliste',
+        specialNotes: 'Besondere Hinweise als Zeilenliste',
+        signage: 'relevante Sicherheitszeichen als Zeilenliste',
+        generalSafety: 'allgemeines Verhalten / Arbeitsschutz als Zeilenliste',
+        emergency: 'Notfall / Erste Hilfe als Zeilenliste',
+        mentalHealth: 'psychische Belastung / Pausen / Überlastung als Zeilenliste',
+        traffic: 'Verkehrswege / Fahrwege als Zeilenliste',
+        loading: 'Be- und Entladung als Zeilenliste',
+        storage: 'Lagerung als Zeilenliste',
+        extraRules: 'Zusatzregeln als Zeilenliste',
+        mandatoryCare: 'Pflichtvorsorge',
+        optionalCare: 'Angebotsvorsorge',
+        requestCare: 'Wunschvorsorge',
+        careBy: 'Durchführung Vorsorge durch',
+        overallRating: 'Grün – Einsatz möglich / Gelb – Einsatz unter Voraussetzungen möglich / Rot – kein Einsatz möglich',
+        conditions: 'Auflagen / Maßnahmen',
+        nextReview: 'Nächste Besichtigung'
+      },
+      riskRows: [{ area:'Gefährdungsbereich', risk:'Risiko/Ursache', measures:'Schutzmaßnahmen', rating:'Ausreichend | Verbesserung erforderlich | Nicht ausreichend', owner:'Verantwortlich', status:'Frist/Status' }],
+      psaRows: [{ item:'PSA-Art', required:'Ja | Nein | Situativ', provided:'Zeitarbeitunternehmen | Einsatzbetrieb | Mitarbeiter', note:'Tragebereich/Hinweis' }],
+      instructionRows: [{ title:'Tätigkeit/Maschine', stand:'Stand/Version', points:'Unterweisungspunkte als Zeilenliste', special:'Besondere Hinweise' }],
+      orgRows: [{ area:'Bereich', owner:'Zuständig/Prüfung', contact:'Kontakt/Stelle', note:'Hinweis/Frist' }]
+    };
+
+    function setAiStatus(text, error = false) {
+      const el = $('aiStatus');
+      if (!el) return;
+      el.textContent = text;
+      el.style.color = error ? '#b91c1c' : '#6b7280';
+      el.style.borderColor = error ? '#fecaca' : '#e5e7eb';
+      el.style.background = error ? '#fff1f2' : '#f9fafb';
+    }
+
+    function normalizeLines(value) {
+      if (Array.isArray(value)) return value.filter(Boolean).map(String).join('\n');
+      return (value || '').toString();
+    }
+
+    function transformAiPayload(payload) {
+      let data = payload;
+      if (Array.isArray(data)) data = data[0] || {};
+      if (data && data.output && typeof data.output === 'object') data = data.output;
+      if (data && data.data && typeof data.data === 'object') data = data.data;
+      if (data && data.result && typeof data.result === 'object') data = data.result;
+      if (!data || typeof data !== 'object') throw new Error('KI-Antwort ist kein JSON-Objekt.');
+
+      const out = { fields: {}, riskRows: [], psaRows: [], instructionRows: [], orgRows: [] };
+      const fieldSource = data.fields && typeof data.fields === 'object' ? data.fields : data;
+      Object.keys(AI_IMPORT_SCHEMA.fields).forEach(id => {
+        if (fieldSource[id] !== undefined && fieldSource[id] !== null) out.fields[id] = normalizeLines(fieldSource[id]);
+      });
+      ['riskRows', 'psaRows', 'instructionRows', 'orgRows'].forEach(key => {
+        if (Array.isArray(data[key])) out[key] = data[key].map(row => {
+          const cleaned = {};
+          Object.entries(row || {}).forEach(([k, v]) => cleaned[k] = normalizeLines(v));
+          return cleaned;
+        });
+      });
+      return out;
+    }
+
+    function mergeImportedData(importData, mode = 'overwrite') {
+      const data = transformAiPayload(importData);
+      const importedFields = [];
+      Object.entries(data.fields || {}).forEach(([id, value]) => {
+        const el = $(id);
+        if (!el || value === '') return;
+        if (mode === 'overwrite' || !el.value.trim()) {
+          el.value = value;
+          importedFields.push(id);
+        }
+      });
+      if (data.fields && data.fields.position && $('filename') && mode === 'overwrite') {
+        $('filename').value = `Arbeitssicherheit_${data.fields.position}`.replace(/[^a-z0-9_\-äöüÄÖÜß]/gi, '_');
+      }
+      const tableMap = [
+        ['riskRows', 'riskRows', addRiskRow],
+        ['psaRows', 'psaRows', addPsaRow],
+        ['instructionRows', 'instructionRows', addInstructionRow],
+        ['orgRows', 'orgRows', addOrgRow]
+      ];
+      tableMap.forEach(([key, containerId, addFn]) => {
+        if (!Array.isArray(data[key]) || !data[key].length) return;
+        if (mode === 'overwrite') $(containerId).innerHTML = '';
+        data[key].forEach(addFn);
+      });
+      setAiStatus(`Import fertig. Felder: ${importedFields.length}. Tabellen: ${data.riskRows.length + data.psaRows.length + data.instructionRows.length + data.orgRows.length} Einträge.`);
+      setStatus('KI-Import übernommen. Bitte prüfen und dann Word-Dokument erstellen.');
+    }
+
+    function localTextToPayload(text) {
+      const t = (text || '').replace(/\r/g, '').trim();
+      if (!t) throw new Error('Kein Text vorhanden.');
+      const lower = t.toLowerCase();
+      const field = (labelAlternatives) => {
+        for (const label of labelAlternatives) {
+          const re = new RegExp(`${label}\\s*[:\u2013-]\\s*(.+)`, 'i');
+          const m = t.match(re);
+          if (m) return m[1].split('\n')[0].trim();
+        }
+        return '';
+      };
+      const grabBlock = (headings) => {
+        for (const h of headings) {
+          const re = new RegExp(`${h}\\s*[:\u2013-]?\\s*([\\s\\S]{0,900}?)(?=\\n\\s*(?:voraussetzung|qualifikation|kenntnisse|arbeitszeit|sicherheit|psa|aufgaben|tätigkeit|arbeitsmittel|rahmenbedingungen|$))`, 'i');
+          const m = t.match(re);
+          if (m && m[1].trim()) return m[1].trim().replace(/[•●]/g, '\n').replace(/\n{2,}/g, '\n');
+        }
+        return '';
+      };
+      const position = field(['stellenbezeichnung', 'position', 'jobtitel', 'tätigkeit']) || (lower.includes('stapler') ? 'Staplerfahrer' : lower.includes('lager') ? 'Lagerhelfer' : '');
+      const duties = grabBlock(['aufgaben', 'tätigkeiten', 'tätigkeitsprofil', 'kernaufgaben']) || t.split('\n').filter(x => /belad|entlad|kommission|lager|stapel|transport|prüfung|scanner|ware/i.test(x)).slice(0,8).join('\n');
+      const equipment = [
+        lower.includes('gabelstapler') || lower.includes('stapler') ? 'Gabelstapler' : '',
+        lower.includes('hubwagen') ? 'Hubwagen' : '',
+        lower.includes('ameise') ? 'Elektro-Ameise' : '',
+        lower.includes('scanner') ? 'Scanner / EDV-Systeme' : '',
+        lower.includes('laderampe') || lower.includes('rampe') ? 'Laderampe' : ''
+      ].filter(Boolean).join('\n');
+      const psa = [];
+      if (/sicherheitsschuh|s3/i.test(t)) psa.push({ item:'Sicherheitsschuhe S3', required:'Ja', provided:'Zeitarbeitunternehmen', note:'Im Lager-/Arbeitsbereich' });
+      if (/warnweste|warnschutz/i.test(t)) psa.push({ item:'Warnschutzweste', required:'Ja', provided:'Einsatzbetrieb', note:'Bei Fahrverkehr / Verkehrswegen' });
+      if (/handschuh/i.test(t)) psa.push({ item:'Schutzhandschuhe', required:'Situativ', provided:'Zeitarbeitunternehmen', note:'Bei scharfkantiger Ware / Bedarf' });
+      const risks = [];
+      if (/stapler|hubwagen|ameise|verkehr/i.test(t)) risks.push({area:'Transport & mobile Arbeitsmittel', rating:'Ausreichend', risk:'Fahrverkehr, Rangieren, Begegnungsverkehr, unübersichtliche Bereiche', measures:'Freigegebene Verkehrswege nutzen, Unterweisung vor Ort, Geschwindigkeit anpassen, Sichtkontakt herstellen', owner:'Einsatzbetrieb / Führungskraft', status:'laufend'});
+      if (/heben|tragen|körper|last|paket|container/i.test(t)) risks.push({area:'Physische Belastung', rating:'Ausreichend', risk:'Heben, Tragen, Ziehen, Schieben, stehende Tätigkeit', measures:'Hilfsmittel nutzen, Lasten nicht allein bewegen, ergonomisch arbeiten, Pausen einhalten', owner:'Mitarbeiter/-in / Vorgesetzte', status:'laufend'});
+      if (/messer|karton|schnitt|quetsch|regal/i.test(t)) risks.push({area:'Mechanische Gefährdungen', rating:'Ausreichend', risk:'Schnitt-, Quetsch- und Stoßgefahren an Waren, Kartons, Regalen oder Arbeitsmitteln', measures:'Sicherheitsmesser und Handschutz nutzen, Abstand halten, Defekte melden', owner:'Alle Beteiligten', status:'laufend'});
+      return {
+        fields: {
+          position,
+          area: field(['arbeitsbereich', 'einsatzbereich', 'bereich']) || (lower.includes('logistik') ? 'Logistik / Lager' : ''),
+          workplace: lower.includes('logistik') ? 'Logistik' : '',
+          clientCompany: field(['unternehmen', 'kunde', 'einsatzbetrieb']),
+          clientContact: field(['ansprechpartner', 'kontakt']),
+          duties,
+          equipment,
+          requirements: grabBlock(['voraussetzungen', 'anforderungen', 'grundvoraussetzungen']) || ['Deutschkenntnisse', lower.includes('körper') ? 'Körperliche Fitness' : '', lower.includes('erfahrung') ? 'Erfahrung in der Tätigkeit' : ''].filter(Boolean).join('\n'),
+          qualification: grabBlock(['qualifikation', 'kenntnisse']) || (lower.includes('staplerschein') ? 'Gültiger Staplerschein' : ''),
+          worktime: field(['arbeitszeit', 'schicht', 'arbeitszeiten']),
+          specialNotes: grabBlock(['rahmenbedingungen', 'hinweise', 'besonderheiten']),
+          optionalCare: /heben|tragen|körper|last/i.test(t) ? 'Muskel- & Skelettsystem bei körperlicher Tätigkeit' : '',
+          generalSafety: 'Persönliche Schutzausrüstung tragen\nBetriebliche Verkehrswege einhalten\nMängel und Unfälle unverzüglich melden\nNur nach Einweisung arbeiten',
+          traffic: /stapler|verkehr|fahrweg/i.test(t) ? 'Gekennzeichnete Verkehrswege nutzen\nFußwege und Fahrwege beachten\nBei Kreuzungen langsam fahren und Sichtkontakt herstellen' : '',
+          loading: /belad|entlad|lkw|rampe|container/i.test(t) ? 'Ladung gegen Verrutschen sichern\nLadebrücken korrekt nutzen\nKipp- und Quetschgefahren beachten' : '',
+          storage: /lager|regal|stapel/i.test(t) ? 'Waren standsicher lagern\nRettungswege und Feuerlöscher freihalten\nBeschädigte Ware oder Verpackung melden' : ''
+        },
+        riskRows: risks,
+        psaRows: psa,
+        instructionRows: position ? [{ title: position, stand: new Date().toISOString().slice(0,10), points: duties || 'Vor Arbeitsaufnahme einweisen lassen\nNur freigegebene Arbeitsmittel nutzen\nMängel sofort melden', special: 'Tätigkeit nur nach Unterweisung und Freigabe durchführen.' }] : []
+      };
+    }
+
+    async function analyzeWithLocalAI() {
+      const rawText = $('aiRawText').value.trim();
+      const mode = $('aiMergeMode').value;
+      if (!rawText) throw new Error('Bitte Text aus dem Claude Agenten einfügen.');
+      
+      setAiStatus('KI-Analyse läuft über lokalen Server...');
+      const res = await fetch('/api/parse', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: rawText })
+      });
+      const text = await res.text();
+      if (!res.ok) {
+        let errMsg = 'Fehler beim Abrufen der KI-Antwort.';
+        try { errMsg = JSON.parse(text).error || errMsg; } catch(e){}
+        throw new Error(errMsg);
+      }
+      let json;
+      try { json = JSON.parse(text); } catch (e) { throw new Error('KI hat kein valides JSON zurückgegeben.'); }
+      mergeImportedData(json, mode);
+    }
+
+    function downloadAiSchema() {
+      const example = {
+        fields: {
+          clientCompany: 'Muster Logistik GmbH',
+          position: 'Staplerfahrer',
+          area: 'Zentrallager',
+          duties: 'Wareneingang\nBe- und Entladung\nSichtprüfung',
+          equipment: 'Gabelstapler\nScanner',
+          requirements: 'Staplerschein\nDeutschkenntnisse',
+          worktime: 'Früh-/Spätschicht'
+        },
+        riskRows: [{ area:'Transport & mobile Arbeitsmittel', risk:'Fahrverkehr', measures:'Unterweisung, Fahrwege nutzen', rating:'Ausreichend', owner:'Einsatzbetrieb', status:'laufend' }],
+        psaRows: [{ item:'Sicherheitsschuhe S3', required:'Ja', provided:'Zeitarbeitunternehmen', note:'Lagerbereich' }],
+        instructionRows: [{ title:'Staplerfahrer', stand:'aktuell', points:'Sichtprüfung\nLasten sichern', special:'Nur beauftragte Personen' }],
+        orgRows: [{ area:'Erste Hilfe', owner:'Einsatzbetrieb', contact:'Aushang', note:'Vor Ort bekanntgeben' }]
+      };
+      const blob = new Blob([JSON.stringify({ schema: AI_IMPORT_SCHEMA, example }, null, 2)], { type: 'application/json' });
+      downloadBlob(blob, 'arbeitssicherheit_ki_schema.json');
+    }
+
+    function safe(v) { return (v || '').toString().trim() || '-'; }
+    function htmlEsc(v) { return (v || '').toString().replace(/[&<>\"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;',"'":'&#039;'}[c] || c)); }
+    function lines(v) { return (v || '').split('\n').map(x => x.trim()).filter(Boolean); }
+    function cleanHex(v) { return (v || '#1A2C5A').replace('#', '').toUpperCase(); }
+    function fileBaseName() { return safe($('filename').value).replace(/[^a-z0-9_\-äöüÄÖÜß]/gi, '_'); }
+
+    function previewLogo(inputId, previewId) {
+      const input = $(inputId);
+      const preview = $(previewId);
+      if (!input || !preview) return;
+      input.addEventListener('change', () => {
+        const file = input.files && input.files[0];
+        if (!file) { preview.textContent = 'Kein Logo geladen'; return; }
+        const url = URL.createObjectURL(file);
+        preview.innerHTML = `<img src="${url}" alt="Logo Vorschau">`;
+      });
+    }
+    previewLogo('clientLogo', 'clientLogoPreview');
+
+    if ($('predefinedLogo')) {
+      $('predefinedLogo').addEventListener('change', () => {
+        const val = $('predefinedLogo').value;
+        const preview = $('predefinedLogoPreview');
+        if (!val) {
+          preview.textContent = 'Kein Logo gewählt';
+        } else {
+          preview.innerHTML = `<img src="${val}" alt="Logo Vorschau">`;
+        }
+      });
+    }
+
+    function addRiskRow(data = {}) {
+      const wrap = document.createElement('div');
+      wrap.className = 'repeat-card risk-row';
+      wrap.innerHTML = `
+        <div class="grid">
+          <div class="field"><label>Bereich / Gefährdung</label><input data-key="area" value="${htmlEsc(data.area || '')}" placeholder="z. B. Transport & mobile Arbeitsmittel"></div>
+          <div class="field"><label>Bewertung</label><select data-key="rating">
+            <option ${data.rating === 'Ausreichend' ? 'selected' : ''}>Ausreichend</option>
+            <option ${data.rating === 'Verbesserung erforderlich' ? 'selected' : ''}>Verbesserung erforderlich</option>
+            <option ${data.rating === 'Nicht ausreichend' ? 'selected' : ''}>Nicht ausreichend</option>
+          </select></div>
+          <div class="field"><label>Risiko / Ursache</label><textarea data-key="risk">${htmlEsc(data.risk || '')}</textarea></div>
+          <div class="field"><label>Technische / organisatorische Maßnahmen</label><textarea data-key="measures">${htmlEsc(data.measures || '')}</textarea></div>
+          <div class="field"><label>Zusätzliche Maßnahmen / Verantwortlich</label><textarea data-key="owner">${htmlEsc(data.owner || '')}</textarea></div>
+          <div class="field"><label>Frist / Status</label><input data-key="status" value="${htmlEsc(data.status || '')}"></div>
+        </div>
+        <div class="repeat-actions"><button class="danger" type="button" onclick="this.closest('.repeat-card').remove()">Entfernen</button></div>`;
+      $('riskRows').appendChild(wrap);
+    }
+
+    function addPsaRow(data = {}) {
+      const wrap = document.createElement('div');
+      wrap.className = 'repeat-card psa-row';
+      wrap.innerHTML = `
+        <div class="grid-3">
+          <div class="field"><label>PSA-Art</label><input data-key="item" value="${htmlEsc(data.item || '')}" placeholder="z. B. Sicherheitsschuhe"></div>
+          <div class="field"><label>Pflicht?</label><select data-key="required"><option ${data.required === 'Ja' ? 'selected' : ''}>Ja</option><option ${data.required === 'Situativ' ? 'selected' : ''}>Situativ</option><option ${data.required === 'Nein' ? 'selected' : ''}>Nein</option></select></div>
+          <div class="field"><label>Gestellt durch</label><select data-key="provided"><option ${data.provided === 'Zeitarbeitunternehmen' ? 'selected' : ''}>Zeitarbeitunternehmen</option><option ${data.provided === 'Einsatzbetrieb' ? 'selected' : ''}>Einsatzbetrieb</option><option ${data.provided === 'Mitarbeiter/-in' ? 'selected' : ''}>Mitarbeiter/-in</option></select></div>
+          <div class="field"><label>Tragebereich / Hinweis</label><input data-key="note" value="${htmlEsc(data.note || '')}"></div>
+        </div>
+        <div class="repeat-actions"><button class="danger" type="button" onclick="this.closest('.repeat-card').remove()">Entfernen</button></div>`;
+      $('psaRows').appendChild(wrap);
+    }
+
+    function addInstructionRow(data = {}) {
+      const wrap = document.createElement('div');
+      wrap.className = 'repeat-card instruction-row';
+      wrap.innerHTML = `
+        <div class="grid">
+          <div class="field"><label>Tätigkeit / Thema</label><input data-key="title" value="${htmlEsc(data.title || '')}" placeholder="z. B. Staplerfahrer"></div>
+          <div class="field"><label>Stand / Version</label><input data-key="stand" value="${htmlEsc(data.stand || '')}" placeholder="z. B. 09.02.2024"></div>
+          <div class="field"><label>Unterweisungspunkte</label><textarea data-key="points">${htmlEsc(data.points || '')}</textarea></div>
+          <div class="field"><label>Defekte / Notfall / Besonderheiten</label><textarea data-key="special">${htmlEsc(data.special || '')}</textarea></div>
+        </div>
+        <div class="repeat-actions"><button class="danger" type="button" onclick="this.closest('.repeat-card').remove()">Entfernen</button></div>`;
+      $('instructionRows').appendChild(wrap);
+    }
+
+    function addOrgRow(data = {}) {
+      const wrap = document.createElement('div');
+      wrap.className = 'repeat-card org-row';
+      wrap.innerHTML = `
+        <div class="grid">
+          <div class="field"><label>Bereich</label><input data-key="area" value="${htmlEsc(data.area || '')}" placeholder="z. B. Erste Hilfe"></div>
+          <div class="field"><label>Zuständig / Prüfung vor Ort</label><input data-key="owner" value="${htmlEsc(data.owner || '')}"></div>
+          <div class="field"><label>Kontakt / Stelle</label><input data-key="contact" value="${htmlEsc(data.contact || '')}"></div>
+          <div class="field"><label>Hinweis / Frist</label><input data-key="note" value="${htmlEsc(data.note || '')}"></div>
+        </div>
+        <div class="repeat-actions"><button class="danger" type="button" onclick="this.closest('.repeat-card').remove()">Entfernen</button></div>`;
+      $('orgRows').appendChild(wrap);
+    }
+
+    function collectRows(selector) {
+      return [...document.querySelectorAll(selector)].map(row => {
+        const obj = {};
+        row.querySelectorAll('[data-key]').forEach(el => obj[el.dataset.key] = el.value);
+        return obj;
+      });
+    }
+
+    function getFormData() {
+      const ids = [...document.querySelectorAll('input:not([type=file]), textarea, select')].map(x => x.id).filter(Boolean).filter(id => !['aiWebhookToken','aiRawText'].includes(id));
+      const data = { fields: {}, riskRows: collectRows('.risk-row'), psaRows: collectRows('.psa-row'), instructionRows: collectRows('.instruction-row'), orgRows: collectRows('.org-row') };
+      ids.forEach(id => data.fields[id] = $(id).value);
+      return data;
+    }
+
+    function loadFormData(data) {
+      Object.entries(data.fields || {}).forEach(([id, value]) => { if ($(id)) $(id).value = value; });
+      $('riskRows').innerHTML = ''; (data.riskRows || []).forEach(addRiskRow);
+      $('psaRows').innerHTML = ''; (data.psaRows || []).forEach(addPsaRow);
+      $('instructionRows').innerHTML = ''; (data.instructionRows || []).forEach(addInstructionRow);
+      $('orgRows').innerHTML = ''; (data.orgRows || []).forEach(addOrgRow);
+    }
+
+    function fillDemo() {
+      const demo = {
+        fields: {
+          docTitle: 'Begehung / Arbeitssicherheit Extern', workplace: 'Logistik', version: '10.2025', filename: 'Begehung_Arbeitssicherheit_Logistik', docDate: today,
+          clientCompany: 'Muster Logistik GmbH', clientNumber: 'K-1025', conductedBy: 'Arbeitsschutz / Disposition', clientContact: 'Herr/Frau Ansprechpartner', position: 'Staplerfahrer / Lagerhelfer', employee: 'Max Mustermann', area: 'Zentrallager / Weiße Ware', employeeOnSite: 'Ja',
+          duties: $('duties').value, equipment: $('equipment').value, requirements: $('requirements').value, qualification: $('qualification').value, worktime: $('worktime').value, specialNotes: $('specialNotes').value,
+          signage: $('signage').value, generalSafety: $('generalSafety').value, emergency: $('emergency').value, mentalHealth: $('mentalHealth').value,
+          traffic: $('traffic').value, loading: $('loading').value, storage: $('storage').value, extraRules: $('extraRules').value,
+          mandatoryCare: 'Nach Tätigkeit prüfen', optionalCare: 'Muskel- & Skelettsystem bei körperlicher Tätigkeit', requestCare: 'Bei Bedarf möglich', careBy: 'Betriebsarzt / zuständige Stelle',
+          overallRating: 'Grün – Einsatz möglich', nextReview: 'Nach Absprache, innerhalb der gesetzlichen Frist', conditions: 'Einsatz unter Einhaltung der genannten Schutzmaßnahmen möglich.', signatures: $('signatures').value,
+          accentColor: '#1A2C5A'
+        },
+        riskRows: [
+          {area:'Transport & mobile Arbeitsmittel', rating:'Ausreichend', risk:'Fahren mit Gabelstapler / Hubwagen, Begegnungsverkehr, unübersichtliche Bereiche', measures:'Freigegebene Verkehrswege nutzen, Unterweisung vor Ort, Geschwindigkeit anpassen, Sichtkontakt herstellen', owner:'Kontrolle durch Einsatzbetrieb / Führungskraft', status:'laufend'},
+          {area:'Physische Belastung', rating:'Ausreichend', risk:'Heben, Tragen, Ziehen, Schieben, Arbeiten im Stehen', measures:'Hilfsmittel verwenden, ergonomische Arbeitsweise, Lasten nicht allein bewegen, Pausen einhalten', owner:'Mitarbeiter/-in und Vorgesetzte', status:'laufend'},
+          {area:'Brand- & Explosionsgefahr', rating:'Ausreichend', risk:'Brandlasten, Ladezonen, elektrische Betriebsmittel', measures:'Rauchverbot beachten, Fluchtwege freihalten, beschädigte Geräte nicht nutzen, Sammelpunkte kennen', owner:'Einsatzbetrieb', status:'laufend'},
+          {area:'Mechanische Gefährdungen', rating:'Ausreichend', risk:'Quetsch-, Schneid- und Stoßstellen an Waren, Toren, Regalen und Flurförderzeugen', measures:'Abstand halten, Handschutz verwenden, keine Eingriffe in laufende Maschinen, Schäden melden', owner:'Mitarbeiter/-in', status:'laufend'}
+        ],
+        psaRows: [
+          {item:'Sicherheitsschuhe S3', required:'Ja', provided:'Zeitarbeitunternehmen', note:'Im gesamten Lagerbereich'},
+          {item:'Warnschutzweste', required:'Ja', provided:'Einsatzbetrieb', note:'Bei Fahrverkehr / Verkehrswegen'},
+          {item:'Schutzhandschuhe', required:'Situativ', provided:'Zeitarbeitunternehmen', note:'Bei scharfkantiger Ware / Chemie'},
+          {item:'Gehörschutz', required:'Situativ', provided:'Einsatzbetrieb', note:'Im Lärmbereich'}
+        ],
+        instructionRows: [
+          {title:'Staplerfahrer', stand:'09.02.2024', points:'Nur schriftlich beauftragte und unterwiesene Personen dürfen fahren\nSicht- und Funktionsprüfung vor Arbeitsbeginn durchführen\nLasten nur gesichert und standsicher transportieren\nPersonenbeförderung ist untersagt\nBeim Verlassen Gabelzinken absenken und Fahrzeug sichern', special:'Bei Defekten Arbeit einstellen, Fahrzeug sichern und Vorgesetzte informieren. Reparaturen nur durch beauftragte Fachkräfte.'},
+          {title:'Lagerhelfer', stand:'12.03.2024', points:'Sicherheitsschuhe tragen\nFußwege und Fahrwege beachten\nBeim Öffnen von Kartons Sicherheitsmesser nutzen\nRettungswege und Feuerlöscher freihalten\nPakete und Waren standsicher lagern', special:'Schwere und unhandliche Lasten nur mit Hilfsmittel oder Unterstützung bewegen.'}
+        ],
+        orgRows: [
+          {area:'Unterweisung', owner:'ZA / AP / EB', contact:'Führungskraft vor Ort', note:'Vor Arbeitsaufnahme'},
+          {area:'Erste Hilfe', owner:'Einsatzbetrieb', contact:'Aushang / Ersthelferliste', note:'Vor Ort bekanntgeben'},
+          {area:'Sicherheitsbeauftragte', owner:'Einsatzbetrieb', contact:'Nach Aushang', note:'Bei Fragen kontaktieren'},
+          {area:'Ansprechpartner Arbeitsschutz', owner:'ZA + EB', contact:'Disposition / Arbeitsschutz', note:'Bei Änderungen informieren'}
+        ]
+      };
+      loadFormData(demo);
+      setStatus('Beispieldaten eingefügt. Logos bei Bedarf separat hochladen.');
+    }
+
+    function resetForm() {
+      if (!confirm('Formular wirklich leeren?')) return;
+      document.querySelectorAll('input:not([type=file]), textarea').forEach(el => el.value = '');
+      document.querySelectorAll('select').forEach(el => el.selectedIndex = 0);
+      $('riskRows').innerHTML = ''; $('psaRows').innerHTML = ''; $('instructionRows').innerHTML = ''; $('orgRows').innerHTML = '';
+      $('docDate').value = today; $('accentColor').value = '#1A2C5A';
+      setStatus('Formular geleert.');
+    }
+
+    async function imageFromInput(inputId, maxW, maxH) {
+      const el = $(inputId);
+      if (!el) return null;
+      const file = el.files && el.files[0];
+      if (!file) return null;
+      const buffer = await file.arrayBuffer();
+      const url = URL.createObjectURL(file);
+      const img = await new Promise((resolve, reject) => {
+        const image = new Image();
+        image.onload = () => resolve(image);
+        image.onerror = reject;
+        image.src = url;
+      });
+      const scale = Math.min(maxW / img.width, maxH / img.height, 1);
+      return { data: new Uint8Array(buffer), width: Math.max(1, Math.round(img.width * scale)), height: Math.max(1, Math.round(img.height * scale)) };
+    }
+
+    async function imageFromUrl(url, maxW, maxH) {
+      if (!url) return null;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return null;
+        const buffer = await res.arrayBuffer();
+        const img = await new Promise((resolve, reject) => {
+          const image = new Image();
+          image.onload = () => resolve(image);
+          image.onerror = reject;
+          image.src = url;
+        });
+        const scale = Math.min(maxW / img.width, maxH / img.height, 1);
+        return { data: new Uint8Array(buffer), width: Math.max(1, Math.round(img.width * scale)), height: Math.max(1, Math.round(img.height * scale)) };
+      } catch (e) {
+        return null;
+      }
+    }
+
+    function downloadBlob(blob, filename) {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 1200);
+    }
+
+    function docxReady() {
+      return window.docx && window.docx.Document && window.docx.Packer;
+    }
+
+    function p(text, options = {}) {
+      const { Paragraph, TextRun, AlignmentType } = docx;
+      return new Paragraph({
+        alignment: options.align || AlignmentType.LEFT,
+        spacing: { after: options.after ?? 120, before: options.before ?? 0 },
+        children: [new TextRun({ text: safe(text), bold: !!options.bold, size: options.size || 21, color: options.color || '111827' })]
+      });
+    }
+
+    function heading(text, level = 1, color = '1A2C5A') {
+      const { Paragraph, TextRun, HeadingLevel } = docx;
+      return new Paragraph({
+        heading: level === 1 ? HeadingLevel.HEADING_1 : HeadingLevel.HEADING_2,
+        spacing: { before: level === 1 ? 280 : 180, after: 100 },
+        children: [new TextRun({ text, bold: true, color, size: level === 1 ? 28 : 24 })]
+      });
+    }
+
+    function bullets(text) {
+      const { Paragraph, TextRun } = docx;
+      return lines(text).map(line => new Paragraph({
+        numbering: { reference: "my-bullets", level: 0 },
+        spacing: { after: 60 },
+        children: [new TextRun({ text: line, size: 21 })]
+      }));
+    }
+
+    function cell(text, opts = {}) {
+      const { TableCell, Paragraph, TextRun, WidthType, ShadingType, VerticalAlign } = docx;
+      return new TableCell({
+        width: opts.width ? { size: opts.width, type: WidthType.PERCENTAGE } : undefined,
+        verticalAlign: VerticalAlign.TOP,
+        margins: { top: 90, bottom: 90, left: 100, right: 100 },
+        shading: opts.shade ? { type: ShadingType.CLEAR, fill: opts.shade, color: 'auto' } : undefined,
+        children: lines(safe(text)).map(line => new Paragraph({ children: [new TextRun({ text: line, bold: !!opts.bold, color: opts.color || '111827', size: opts.size || 19 })] }))
+      });
+    }
+
+    function table(rows, widths = []) {
+      const { Table, TableRow, WidthType, BorderStyle } = docx;
+      return new Table({
+        width: { size: 100, type: WidthType.PERCENTAGE },
+        borders: {
+          top: { style: BorderStyle.SINGLE, size: 1, color: 'D1D5DB' },
+          bottom: { style: BorderStyle.SINGLE, size: 1, color: 'D1D5DB' },
+          left: { style: BorderStyle.SINGLE, size: 1, color: 'D1D5DB' },
+          right: { style: BorderStyle.SINGLE, size: 1, color: 'D1D5DB' },
+          insideHorizontal: { style: BorderStyle.SINGLE, size: 1, color: 'E5E7EB' },
+          insideVertical: { style: BorderStyle.SINGLE, size: 1, color: 'E5E7EB' }
+        },
+        rows: rows.map(r => new TableRow({ children: r.map((value, i) => cell(value, { width: widths[i], ...(r._header ? { shade: 'EEF2FF', bold: true, color: cleanHex($('accentColor').value) } : {}) })) }))
+      });
+    }
+
+    function headerRow(values) { const arr = values.slice(); arr._header = true; return arr; }
+
+    function labelTable(pairs) {
+      return table(pairs.map(([a,b]) => [a, b]), [32, 68]);
+    }
+
+    function spacer() { return p('', { after: 40 }); }
+
+
+    async function createBaseDoc(docTitleSuffix) {
+      if (!docxReady()) throw new Error('DOCX-Bibliothek konnte nicht geladen werden.');
+      const { Document, Paragraph, TextRun, AlignmentType, Header, Footer, ImageRun, WidthType, Table, TableRow, TableCell, BorderStyle } = docx;
+      
+      const accent = cleanHex($('accentColor').value);
+      const selectedLogoUrl = $('predefinedLogo') ? $('predefinedLogo').value : null;
+      const ownLogo = await imageFromUrl(selectedLogoUrl, 210, 90);
+      const clientLogo = await imageFromInput('clientLogo', 170, 80);
+      const footerLogo = await imageFromUrl(selectedLogoUrl, 80, 38);
+
+      const headerChildren = [];
+      if (ownLogo) {
+        headerChildren.push(new Paragraph({ alignment: AlignmentType.RIGHT, children: [new ImageRun({ data: ownLogo.data, transformation: { width: Math.min(120, ownLogo.width), height: Math.min(52, ownLogo.height) } })] }));
+      }
+      headerChildren.push(new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: `${safe($('docTitle').value)} - ${docTitleSuffix} · Stand ${safe($('version').value)}`, size: 15, color: '6B7280' })] }));
+
+      const footerChildren = [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new TextRun({ text: `Stand: ${safe($('version').value)}  |  ${safe($('workplace').value)}`, size: 15, color: '6B7280' })] })];
+      if (footerLogo) footerChildren.unshift(new Paragraph({ alignment: AlignmentType.RIGHT, children: [new ImageRun({ data: footerLogo.data, transformation: { width: footerLogo.width, height: footerLogo.height } })] }));
+
+      const children = [];
+      if (ownLogo || clientLogo) {
+        const logoCells = [];
+        logoCells.push(new TableCell({ borders: { top:{style:BorderStyle.NONE}, bottom:{style:BorderStyle.NONE}, left:{style:BorderStyle.NONE}, right:{style:BorderStyle.NONE} }, children: ownLogo ? [new Paragraph({ children: [new ImageRun({ data: ownLogo.data, transformation: { width: ownLogo.width, height: ownLogo.height } })] })] : [p('')] }));
+        logoCells.push(new TableCell({ borders: { top:{style:BorderStyle.NONE}, bottom:{style:BorderStyle.NONE}, left:{style:BorderStyle.NONE}, right:{style:BorderStyle.NONE} }, children: clientLogo ? [new Paragraph({ alignment: AlignmentType.RIGHT, children: [new ImageRun({ data: clientLogo.data, transformation: { width: clientLogo.width, height: clientLogo.height } })] })] : [p('')] }));
+        children.push(new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, borders: { top:{style:BorderStyle.NONE}, bottom:{style:BorderStyle.NONE}, left:{style:BorderStyle.NONE}, right:{style:BorderStyle.NONE}, insideHorizontal:{style:BorderStyle.NONE}, insideVertical:{style:BorderStyle.NONE} }, rows: [new TableRow({ children: logoCells })] }));
+      }
+
+      children.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 4800, after: 80 }, children: [new TextRun({ text: safe($('docTitle').value), bold: true, color: accent, size: 38 })] }));
+      children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: docTitleSuffix, size: 28, color: '6B7280', bold: true })] }));
+      children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Arbeitsplatz: ${safe($('workplace').value)}`, size: 24 })] }));
+      children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Stand: ${safe($('version').value)}`, size: 24 })] }));
+      children.push(new Paragraph({ alignment: AlignmentType.CENTER, spacing: { before: 260, after: 160 }, children: [new TextRun({ text: `Kundenunternehmen / Einsatzbetrieb: ${safe($('clientCompany').value)}`, size: 22 })] }));
+      children.push(new Paragraph({ alignment: AlignmentType.CENTER, children: [new TextRun({ text: `Datum: ${safe($('docDate').value)}`, size: 20, color: '6B7280' })] }));
+      children.push(new Paragraph({ children: [docx.PageBreak ? new docx.PageBreak() : new docx.TextRun("")] })); // In browser umd docx PageBreak is not a constructor directly sometimes, but it's part of docx
+
+      return { children, headerChildren, footerChildren, accent };
+    }
+
+    async function finishAndDownloadDoc(baseData, docTitleSuffix, fileSuffix) {
+      const { Document, Packer, Header, Footer } = docx;
+      const doc = new Document({
+        creator: 'Arbeitssicherheit Tool',
+        title: safe($('docTitle').value) + ' - ' + docTitleSuffix,
+        styles: {
+          default: {
+            document: { run: { font: 'Aptos', size: 21, color: '111827' }, paragraph: { spacing: { after: 90 } } }
+          }
+        },
+        numbering: {
+          config: [
+            {
+              reference: "my-bullets",
+              levels: [
+                {
+                  level: 0,
+                  format: "bullet",
+                  text: "•",
+                  alignment: docx.AlignmentType.LEFT,
+                  style: { paragraph: { indent: { left: 400, hanging: 280 } } }
+                }
+              ]
+            }
+          ]
+        },
+        sections: [{
+          properties: { page: { margin: { top: 900, right: 720, bottom: 780, left: 720 } } },
+          headers: { default: new Header({ children: baseData.headerChildren }) },
+          footers: { default: new Footer({ children: baseData.footerChildren }) },
+          children: baseData.children
+        }]
+      });
+      const blob = await Packer.toBlob(doc);
+      downloadBlob(blob, `${fileBaseName()}_${fileSuffix}.docx`);
+    }
+
+    function appendGeneralInfo(children, accent) {
+      children.push(heading('1. Allgemeine Angaben & Arbeitsplatz', 1, accent));
+      children.push(labelTable([
+        ['Kundenunternehmen / Einsatzbetrieb', $('clientCompany').value], ['Kunden-Nr.', $('clientNumber').value], ['Datum der Begehung', $('docDate').value], ['Durchgeführt durch', $('conductedBy').value], ['Ansprechpartner/-in beim Kunden', $('clientContact').value], ['Oberbegriff / Position', $('position').value], ['Arbeitsplatz / Arbeitsbereich', $('area').value], ['Mitarbeiter/-in', $('employee').value], ['Mitarbeiter/-in am vereinbarten Arbeitsplatz?', $('employeeOnSite').value]
+      ]));
+    }
+
+    async function generateArbeitssicherheitDoc() {
+      try {
+        setStatus('Dokument 1 (Arbeitssicherheit) wird erstellt ...');
+        const base = await createBaseDoc('Arbeitssicherheitsdokument');
+        const { children, accent } = base;
+        const { TableCell, Paragraph, BorderStyle, Table, WidthType, TableRow, TextRun } = docx;
+
+        appendGeneralInfo(children, accent);
+
+        children.push(heading('2. Gefährdungsbeurteilung & Maßnahmen', 1, accent));
+        const riskRows = collectRows('.risk-row');
+        children.push(table([headerRow(['Gefährdung / Bereich', 'Risiko / Ursache', 'Maßnahmen', 'Bewertung', 'Zusatz / Status'])].concat(riskRows.map(r => [r.area, r.risk, r.measures, r.rating, `${safe(r.owner)}\n${safe(r.status)}`])), [18, 24, 28, 14, 16]));
+
+        children.push(heading('3. Persönliche Schutzausrüstung (PSA)', 1, accent));
+        const psaRows = collectRows('.psa-row');
+        children.push(table([headerRow(['PSA-Art', 'Pflicht', 'Gestellt durch', 'Tragebereich / Hinweis'])].concat(psaRows.map(r => [r.item, r.required, r.provided, r.note])), [28, 16, 25, 31]));
+
+        children.push(heading('4. Arbeitsmedizinische Vorsorge', 1, accent));
+        children.push(labelTable([['Pflichtvorsorge', $('mandatoryCare').value], ['Angebotsvorsorge', $('optionalCare').value], ['Wunschvorsorge', $('requestCare').value], ['Durchführung durch', $('careBy').value]]));
+
+        children.push(heading('5. Organisation & Ansprechpartner', 1, accent));
+        const orgRows = collectRows('.org-row');
+        children.push(table([headerRow(['Bereich', 'Zuständig / Prüfung', 'Kontakt / Stelle', 'Hinweis / Frist'])].concat(orgRows.map(r => [r.area, r.owner, r.contact, r.note])), [25, 25, 25, 25]));
+
+        children.push(heading('6. Gesamteinschätzung & Freigabe', 1, accent));
+        children.push(labelTable([['Gesamteinschätzung', $('overallRating').value], ['Auflagen / Maßnahmen', $('conditions').value], ['Nächste Arbeitsplatzbesichtigung', $('nextReview').value]]));
+
+        children.push(heading('7. Dokumentation & Unterschriften', 1, accent));
+        children.push(p('Mit der Unterzeichnung wird bestätigt, dass die Unterweisung durchgeführt wurde und die Inhalte verstanden wurden.'));
+        const sigLines = lines($('signatures').value);
+        const sigRow = sigLines.map(label => new TableCell({
+          margins: { top: 420, bottom: 80, left: 80, right: 80 },
+          children: [new Paragraph({ border: { top: { color: '9CA3AF', space: 1, style: BorderStyle.SINGLE, size: 6 } }, children: [new TextRun({ text: label, size: 18 })] })]
+        }));
+        children.push(new Table({ width: { size: 100, type: WidthType.PERCENTAGE }, borders: { top:{style:BorderStyle.NONE}, bottom:{style:BorderStyle.NONE}, left:{style:BorderStyle.NONE}, right:{style:BorderStyle.NONE}, insideHorizontal:{style:BorderStyle.NONE}, insideVertical:{style:BorderStyle.NONE} }, rows: [new TableRow({ children: sigRow.length ? sigRow : [cell('Unterschrift')] })] }));
+
+        await finishAndDownloadDoc(base, 'Arbeitssicherheitsdokument', 'Arbeitssicherheit');
+        setStatus('Dokument 1 wurde erstellt.');
+      } catch(e) { setStatus('Fehler: ' + e.message, true); console.error(e); }
+    }
+
+    async function generateStellenbeschreibungDoc() {
+      try {
+        setStatus('Dokument 2 (Stellenbeschreibung) wird erstellt ...');
+        const base = await createBaseDoc('Stellenbeschreibung / Tätigkeitsprofil');
+        const { children, accent } = base;
+
+        appendGeneralInfo(children, accent);
+
+        children.push(heading('2. Stellenbeschreibung / Tätigkeitsprofil', 1, accent));
+        children.push(labelTable([['Position', $('position').value], ['Arbeitsbereich', $('area').value], ['Arbeitszeit / Schicht', $('worktime').value], ['Besondere Hinweise', $('specialNotes').value]]));
+        children.push(heading('Tätigkeiten', 2, accent)); children.push(...bullets($('duties').value));
+        children.push(heading('Arbeitsmittel / Maschinen', 2, accent)); children.push(...bullets($('equipment').value));
+
+        children.push(heading('3. Voraussetzungen & Qualifikation', 1, accent));
+        children.push(heading('Grundvoraussetzungen an Personal', 2, accent)); children.push(...bullets($('requirements').value));
+        children.push(heading('Qualifikation / Ziel', 2, accent)); children.push(...bullets($('qualification').value));
+
+        children.push(heading('4. Verkehrswege, Be-/Entladung & Lagerung', 1, accent));
+        children.push(heading('Verkehrswege', 2, accent)); children.push(...bullets($('traffic').value));
+        children.push(heading('Be- & Entladung', 2, accent)); children.push(...bullets($('loading').value));
+        children.push(heading('Lagerung', 2, accent)); children.push(...bullets($('storage').value));
+        children.push(heading('Zusatzregeln', 2, accent)); children.push(...bullets($('extraRules').value));
+
+        await finishAndDownloadDoc(base, 'Stellenbeschreibung', 'Stellenbeschreibung');
+        setStatus('Dokument 2 wurde erstellt.');
+      } catch(e) { setStatus('Fehler: ' + e.message, true); console.error(e); }
+    }
+
+    async function generateUnterweisungDoc() {
+      try {
+        setStatus('Dokument 3 (Unterweisungen) wird erstellt ...');
+        const base = await createBaseDoc('Sicherheitsunterweisung');
+        const { children, accent } = base;
+
+        appendGeneralInfo(children, accent);
+
+        children.push(heading('2. Allgemeine Sicherheitsunterweisung', 1, accent));
+        children.push(heading('Sicherheitskennzeichen', 2, accent)); children.push(...bullets($('signage').value));
+        children.push(heading('Allgemeines Verhalten', 2, accent)); children.push(...bullets($('generalSafety').value));
+        children.push(heading('Notfall / Erste Hilfe', 2, accent)); children.push(...bullets($('emergency').value));
+        children.push(heading('Psychische Gesundheit / Belastung', 2, accent)); children.push(...bullets($('mentalHealth').value));
+
+        children.push(heading('3. Tätigkeitsspezifische Unterweisung', 1, accent));
+        collectRows('.instruction-row').forEach((r, index) => {
+          children.push(heading(`${index + 1}. ${safe(r.title)}`, 2, accent));
+          children.push(labelTable([['Stand / Version', r.stand], ['Besonderheiten / Defekte / Notfall', r.special]]));
+          children.push(...bullets(r.points));
+        });
+
+        await finishAndDownloadDoc(base, 'Sicherheitsunterweisung', 'Unterweisung');
+        setStatus('Dokument 3 wurde erstellt.');
+      } catch(e) { setStatus('Fehler: ' + e.message, true); console.error(e); }
+    }
+
+    async function generateAllDocs() {
+      await generateArbeitssicherheitDoc();
+      await generateStellenbeschreibungDoc();
+      await generateUnterweisungDoc();
+      setStatus('Alle 3 Dokumente wurden generiert.');
+    }
+
+    $('demoBtn').addEventListener('click', fillDemo);
+    $('resetBtn').addEventListener('click', resetForm);
+    $('generateAllBtn').addEventListener('click', generateAllDocs);
+    $('saveJsonBtn').addEventListener('click', () => {
+      const blob = new Blob([JSON.stringify(getFormData(), null, 2)], { type: 'application/json' });
+      downloadBlob(blob, `${fileBaseName()}_formular.json`);
+      setStatus('Formular als JSON gespeichert. Logos werden aus Sicherheitsgründen nicht in JSON gespeichert.');
+    });
+    $('loadJson').addEventListener('change', async (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+      try {
+        const data = JSON.parse(await file.text());
+        loadFormData(data);
+        setStatus('JSON geladen. Logos bei Bedarf separat hochladen.');
+      } catch (e) { setStatus('JSON konnte nicht geladen werden.', true); }
+    });
+
+
+    if ($('aiSchemaPreview')) $('aiSchemaPreview').textContent = JSON.stringify(AI_IMPORT_SCHEMA, null, 2);
+    if ($('aiAnalyzeBtn')) $('aiAnalyzeBtn').addEventListener('click', async () => {
+      try { await analyzeWithLocalAI(); } catch (e) { setAiStatus(e.message || 'KI-Analyse fehlgeschlagen.', true); }
+    });
+    if ($('aiLocalTextBtn')) $('aiLocalTextBtn').addEventListener('click', () => {
+      try { mergeImportedData(localTextToPayload($('aiRawText').value), $('aiMergeMode').value); } catch (e) { setAiStatus(e.message || 'Rohtext konnte nicht analysiert werden.', true); }
+    });
+    if ($('downloadSchemaBtn')) $('downloadSchemaBtn').addEventListener('click', downloadAiSchema);
+
+    // Default rows
+    addRiskRow({area:'Transport & mobile Arbeitsmittel', rating:'Ausreichend', risk:'Fahren mit Flurfördermitteln, Begegnungsverkehr, unübersichtliche Bereiche', measures:'Freigegebene Verkehrswege nutzen, Unterweisung vor Ort, Geschwindigkeit anpassen, Sichtkontakt herstellen', owner:'Einsatzbetrieb / Führungskraft', status:'laufend'});
+    addRiskRow({area:'Physische Belastung', rating:'Ausreichend', risk:'Heben, Tragen, Ziehen, Schieben, Arbeiten im Stehen', measures:'Hilfsmittel verwenden, Lasten nicht allein bewegen, Pausen einhalten', owner:'Mitarbeiter/-in / Vorgesetzte', status:'laufend'});
+    addRiskRow({area:'Mechanische Gefährdungen', rating:'Ausreichend', risk:'Quetschen, Stoßen, Schneiden an Waren, Maschinen und Arbeitsmitteln', measures:'Abstand halten, Handschutz nutzen, Defekte melden, nur eingewiesene Arbeitsmittel verwenden', owner:'Alle Beteiligten', status:'laufend'});
+    addPsaRow({item:'Sicherheitsschuhe S3', required:'Ja', provided:'Zeitarbeitunternehmen', note:'Im Lager- und Verkehrsbereich'});
+    addPsaRow({item:'Warnschutzweste', required:'Ja', provided:'Einsatzbetrieb', note:'Bei Fahrverkehr / auf Verkehrswegen'});
+    addPsaRow({item:'Schutzhandschuhe', required:'Situativ', provided:'Zeitarbeitunternehmen', note:'Bei scharfkantiger Ware oder Chemie'});
+    addInstructionRow({title:'Staplerfahrer', stand:'09.02.2024', points:'Nur schriftlich beauftragte und unterwiesene Personen dürfen fahren\nSicht- und Funktionsprüfung vor Arbeitsbeginn durchführen\nLasten sicher aufnehmen, transportieren und absetzen\nPersonenbeförderung ist untersagt\nBeim Abstellen Gabelzinken absenken und Fahrzeug sichern', special:'Bei Defekten Arbeit einstellen, Schaden melden und Reparaturen nur durch beauftragte Fachkräfte durchführen lassen.'});
+    addInstructionRow({title:'Lagerhelfer', stand:'12.03.2024', points:'Sicherheitsschuhe tragen\nFußwege und Fahrwege beachten\nBeim Öffnen von Kartons Sicherheitsmesser nutzen\nRettungswege und Feuerlöscher freihalten\nWaren standsicher lagern', special:'Schwere und unhandliche Lasten nur mit Hilfsmittel oder Unterstützung bewegen.'});
+    addOrgRow({area:'Unterweisung', owner:'ZA / AP / EB', contact:'Führungskraft vor Ort', note:'Vor Arbeitsaufnahme'});
+    addOrgRow({area:'Erste Hilfe', owner:'Einsatzbetrieb', contact:'Aushang / Ersthelferliste', note:'Vor Ort bekanntgeben'});
+    addOrgRow({area:'Ansprechpartner Arbeitsschutz', owner:'ZA + EB', contact:'Disposition / Arbeitsschutz', note:'Bei Änderungen informieren'});
+  </script>
+</body>
+</html>

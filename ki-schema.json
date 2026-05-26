@@ -1,0 +1,46 @@
+{
+  "format": "arbeitssicherheit_docx_schema_v1",
+  "fields": {
+    "clientCompany": "Kundenunternehmen / Einsatzbetrieb",
+    "clientNumber": "Kunden-Nr.",
+    "conductedBy": "Durchgeführt durch",
+    "clientContact": "Ansprechpartner beim Kunden",
+    "position": "Stellenbezeichnung / Oberbegriff",
+    "employee": "Mitarbeitername",
+    "area": "Arbeitsort / Arbeitsbereich",
+    "workplace": "Kurzbereich, z. B. Logistik",
+    "duties": "Tätigkeiten als Zeilenliste",
+    "equipment": "Arbeitsmittel / Maschinen als Zeilenliste",
+    "requirements": "Grundvoraussetzungen als Zeilenliste",
+    "qualification": "Qualifikationen als Zeilenliste",
+    "worktime": "Arbeitszeiten / Schichten",
+    "specialNotes": "Besondere Hinweise",
+    "signage": "Sicherheitszeichen",
+    "generalSafety": "Allgemeine Sicherheitsregeln",
+    "emergency": "Notfall / Erste Hilfe",
+    "mentalHealth": "Psychische Belastung / Pausen",
+    "traffic": "Verkehrswege / Fahrwege",
+    "loading": "Be- und Entladung",
+    "storage": "Lagerung",
+    "extraRules": "Zusatzregeln",
+    "mandatoryCare": "Pflichtvorsorge",
+    "optionalCare": "Angebotsvorsorge",
+    "requestCare": "Wunschvorsorge",
+    "careBy": "Durchführung Vorsorge durch",
+    "overallRating": "Grün – Einsatz möglich | Gelb – Einsatz unter Voraussetzungen möglich | Rot – kein Einsatz möglich",
+    "conditions": "Auflagen / Maßnahmen",
+    "nextReview": "Nächste Arbeitsplatzbesichtigung"
+  },
+  "riskRows": [
+    { "area": "", "risk": "", "measures": "", "rating": "", "owner": "", "status": "" }
+  ],
+  "psaRows": [
+    { "item": "", "required": "", "provided": "", "note": "" }
+  ],
+  "instructionRows": [
+    { "title": "", "stand": "", "points": "", "special": "" }
+  ],
+  "orgRows": [
+    { "area": "", "owner": "", "contact": "", "note": "" }
+  ]
+}
