@@ -612,14 +612,25 @@ Nur unterwiesene Personen dürfen Maschinen bedienen</textarea></div>
         },
         riskRows: risks,
         psaRows: psa,
-        vorsorgeRows: [
-          ...(/stapler|gabelstapler|hubwagen|flurförder|hubarbeitsbühne/i.test(t) ? [{code:'G 25', bezeichnung:'Fahr-/Steuertätigkeiten (Stapler)', typ:'Pflicht'}] : []),
-          ...(/lärm|laut|maschine|produktion|schleif|säg/i.test(t) ? [{code:'G 20', bezeichnung:'Lärmbelastung', typ:'Pflicht'}] : []),
-          ...(/heben|tragen|körper|last|paket|schieben|ziehen/i.test(t) ? [{code:'G 46', bezeichnung:'Muskel-Skelett-System (körperliche Belastung)', typ:'Angebot'}] : []),
-          ...(/bildschirm|pc |monitor|büro|sachbearbeit/i.test(t) ? [{code:'G 37', bezeichnung:'Bildschirmarbeit', typ:'Angebot'}] : []),
-          ...(/schweißen|schweiss|schneid|trennen/i.test(t) ? [{code:'G 39', bezeichnung:'Schweißen / Trennen von Metallen', typ:'Pflicht'}] : []),
-          ...(/atemschutz|atemmaske|ffp/i.test(t) ? [{code:'G 26', bezeichnung:'Atemschutz', typ:'Pflicht'}] : [])
-        ]
+        vorsorgeRows: (() => {
+          // Parse "- G XX | Bezeichnung | Pflicht/Angebot" lines from summary
+          const parsed = [];
+          const lineRe = /[-–]\s*(G\s*\d+[\w.]*)\s*\|\s*([^|]+)\s*\|\s*(Pflicht|Angebot)/gi;
+          let m;
+          while ((m = lineRe.exec(t)) !== null) {
+            parsed.push({ code: m[1].trim(), bezeichnung: m[2].trim(), typ: m[3].trim() });
+          }
+          if (parsed.length) return parsed;
+          // Fallback: keyword detection
+          return [
+            ...(/stapler|gabelstapler|hubwagen|flurförder|hubarbeitsbühne/i.test(t) ? [{code:'G 25', bezeichnung:'Fahr-/Steuertätigkeiten (Stapler)', typ:'Pflicht'}] : []),
+            ...(/lärm|laut|maschine|produktion|schleif|säg/i.test(t) ? [{code:'G 20', bezeichnung:'Lärmbelastung', typ:'Pflicht'}] : []),
+            ...(/heben|tragen|körper|last|paket|schieben|ziehen/i.test(t) ? [{code:'G 46', bezeichnung:'Muskel-Skelett-System (körperliche Belastung)', typ:'Angebot'}] : []),
+            ...(/bildschirm|pc |monitor|büro|sachbearbeit/i.test(t) ? [{code:'G 37', bezeichnung:'Bildschirmarbeit', typ:'Angebot'}] : []),
+            ...(/schweißen|schweiss|schneid|trennen/i.test(t) ? [{code:'G 39', bezeichnung:'Schweißen / Trennen von Metallen', typ:'Pflicht'}] : []),
+            ...(/atemschutz|atemmaske|ffp/i.test(t) ? [{code:'G 26', bezeichnung:'Atemschutz', typ:'Pflicht'}] : [])
+          ];
+        })()
       };
     }
 

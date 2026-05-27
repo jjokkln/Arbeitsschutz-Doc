@@ -2,7 +2,7 @@
   "format": "arbeitssicherheit_docx_schema_v1",
   "fields": {
     "clientCompany": "Kundenunternehmen / Einsatzbetrieb",
-    "clientNumber": "Kunden-Nr.",
+    "clientNumber": "Dokumenten-Nr.",
     "conductedBy": "Durchgeführt durch",
     "clientContact": "Ansprechpartner beim Kunden",
     "position": "Stellenbezeichnung / Oberbegriff",
@@ -23,9 +23,6 @@
     "loading": "Be- und Entladung",
     "storage": "Lagerung",
     "extraRules": "Zusatzregeln",
-    "mandatoryCare": "Pflichtvorsorge",
-    "optionalCare": "Angebotsvorsorge",
-    "requestCare": "Wunschvorsorge",
     "careBy": "Durchführung Vorsorge durch",
     "overallRating": "Grün – Einsatz möglich | Gelb – Einsatz unter Voraussetzungen möglich | Rot – kein Einsatz möglich",
     "conditions": "Auflagen / Maßnahmen",
@@ -37,10 +34,10 @@
   "psaRows": [
     { "item": "", "required": "", "provided": "", "note": "" }
   ],
-  "instructionRows": [
-    { "title": "", "stand": "", "points": "", "special": "" }
-  ],
   "orgRows": [
     { "area": "", "owner": "", "contact": "", "note": "" }
+  ],
+  "vorsorgeRows": [
+    { "code": "G-Code z.B. G 25", "bezeichnung": "Anlass / Bezeichnung z.B. Staplertätigkeit", "typ": "Pflicht | Angebot" }
   ]
 }
